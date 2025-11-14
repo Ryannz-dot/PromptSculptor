@@ -35,7 +35,7 @@
   background: linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(124, 58, 237, 1) 100%);
 }
 
-/* Widget Label - slides in from left on hover */
+/* Widget Label - slides in from left on hover, clickable button */
 .ps-widget-label {
   color: white;
   font-size: 12px;
@@ -45,15 +45,51 @@
   opacity: 0;
   transform: translateX(20px);
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
   margin-right: auto;
-  padding-left: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
 }
 
 .ps-widget:hover .ps-widget-label,
 .ps-widget.ps-active .ps-widget-label {
   opacity: 1;
   transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Hover effect for clickable label */
+.ps-widget-label:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(0) scale(1.02);
+}
+
+.ps-widget-label:active {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(0) scale(0.98);
+}
+
+/* Ripple effect on click */
+.ps-widget-label::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.ps-widget-label:active::before {
+  width: 200px;
+  height: 200px;
 }
 
 /* Widget Buttons */
@@ -198,6 +234,13 @@
 
 .ps-dropdown-item span {
   flex: 1;
+}
+
+/* Dropdown Divider */
+.ps-dropdown-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 4px 0;
 }
 
 /* Modal */

@@ -27,14 +27,23 @@
       name: 'ChatGPT',
       type: 'chatgpt',
       submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
-      improvementPrompt: (userPrompt) => `You are a prompt engineering expert. Improve this prompt to get the best possible response from an AI assistant. Make it more specific, well-structured, and clear. Add context, constraints, and output format where appropriate.
+      improvementPrompt: (userPrompt) => `You are an expert prompt engineer. Your task is to transform the user's prompt into a highly effective, structured prompt that will elicit the best possible response from an AI assistant.
+
+Apply these prompt engineering principles:
+1. **Clarity & Specificity**: Make the request crystal clear and specific
+2. **Context & Background**: Add relevant context where beneficial
+3. **Structure**: Organize complex requests with clear sections
+4. **Output Format**: Specify desired response format when appropriate (e.g., bullet points, table, code, step-by-step)
+5. **Constraints**: Add relevant constraints or guidelines (length, style, tone)
+6. **Examples**: Include examples if they would clarify the request
+7. **Role Assignment**: Consider adding a role/persona if it enhances the response quality
 
 Original prompt:
 """
 ${userPrompt}
 """
 
-Respond ONLY with the improved prompt, nothing else. Do not add explanations or meta-commentary.`
+CRITICAL: Return ONLY the improved prompt, with NO explanations, NO meta-commentary, and NO wrapper text like "Here's the improved prompt:". Start directly with the improved prompt content.`
     },
     'chatgpt.com': {
       selectors: [
@@ -48,14 +57,23 @@ Respond ONLY with the improved prompt, nothing else. Do not add explanations or 
       name: 'ChatGPT',
       type: 'chatgpt',
       submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
-      improvementPrompt: (userPrompt) => `You are a prompt engineering expert. Improve this prompt to get the best possible response from an AI assistant. Make it more specific, well-structured, and clear. Add context, constraints, and output format where appropriate.
+      improvementPrompt: (userPrompt) => `You are an expert prompt engineer. Your task is to transform the user's prompt into a highly effective, structured prompt that will elicit the best possible response from an AI assistant.
+
+Apply these prompt engineering principles:
+1. **Clarity & Specificity**: Make the request crystal clear and specific
+2. **Context & Background**: Add relevant context where beneficial
+3. **Structure**: Organize complex requests with clear sections
+4. **Output Format**: Specify desired response format when appropriate (e.g., bullet points, table, code, step-by-step)
+5. **Constraints**: Add relevant constraints or guidelines (length, style, tone)
+6. **Examples**: Include examples if they would clarify the request
+7. **Role Assignment**: Consider adding a role/persona if it enhances the response quality
 
 Original prompt:
 """
 ${userPrompt}
 """
 
-Respond ONLY with the improved prompt, nothing else. Do not add explanations or meta-commentary.`
+CRITICAL: Return ONLY the improved prompt, with NO explanations, NO meta-commentary, and NO wrapper text like "Here's the improved prompt:". Start directly with the improved prompt content.`
     },
     'claude.ai': {
       selectors: [
@@ -66,12 +84,20 @@ Respond ONLY with the improved prompt, nothing else. Do not add explanations or 
       name: 'Claude',
       type: 'claude',
       submitSelector: 'button[aria-label*="Send"]',
-      improvementPrompt: (userPrompt) => `As a prompt engineering expert, improve this prompt for maximum effectiveness. Enhance clarity, add structure, specify output format, and include relevant context.
+      improvementPrompt: (userPrompt) => `You are a world-class prompt engineer specializing in crafting prompts for Claude. Transform this prompt into an optimized version that leverages Claude's strengths.
 
-Original:
+Apply these principles:
+1. **Crystal Clear Intent**: Ensure the request is unambiguous and specific
+2. **Structured Thinking**: Break complex tasks into logical steps or sections
+3. **Context Provision**: Include necessary background information
+4. **Output Specification**: Define the desired format, length, and style
+5. **Quality Indicators**: Add constraints that signal high-quality expectations
+6. **Examples When Helpful**: Provide examples to clarify complex requirements
+
+Original prompt:
 ${userPrompt}
 
-Provide only the improved prompt without any explanation.`
+IMPORTANT: Output ONLY the improved prompt. No preamble, no explanation, no "Here's the improved version". Just the prompt itself.`
     },
     'gemini.google.com': {
       selectors: [
@@ -82,11 +108,20 @@ Provide only the improved prompt without any explanation.`
       name: 'Gemini',
       type: 'gemini',
       submitSelector: 'button[aria-label*="Send"]',
-      improvementPrompt: (userPrompt) => `Improve this prompt for better AI responses. Make it more specific, structured, and effective:
+      improvementPrompt: (userPrompt) => `You are an expert prompt engineer optimizing prompts for Google Gemini. Transform this user prompt into a highly effective version.
 
+Enhancement Guidelines:
+1. **Precision**: Make requirements explicit and unambiguous
+2. **Organization**: Structure multi-part requests clearly
+3. **Context**: Provide relevant background for better understanding
+4. **Format Specification**: Define desired output structure (lists, tables, code, etc.)
+5. **Constraints**: Add helpful boundaries (length, complexity, style)
+6. **Clarity**: Eliminate vagueness and potential misinterpretations
+
+User's original prompt:
 ${userPrompt}
 
-Return only the improved version.`
+Output ONLY the enhanced prompt. Do not include any introduction, explanation, or meta-text. Begin directly with the improved prompt.`
     },
     'perplexity.ai': {
       selectors: [
@@ -98,11 +133,20 @@ Return only the improved version.`
       name: 'Perplexity',
       type: 'perplexity',
       submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `As a prompt engineering expert, improve this prompt for better search and AI responses:
+      improvementPrompt: (userPrompt) => `You are a prompt engineering expert specializing in search and research queries for Perplexity AI. Optimize this prompt for comprehensive, well-sourced responses.
 
+Optimization Strategy:
+1. **Search Intent**: Clarify what information is being sought
+2. **Scope Definition**: Define the breadth and depth of research needed
+3. **Source Preferences**: Specify types of sources if relevant (academic, recent news, technical docs)
+4. **Structure**: Organize multi-faceted questions clearly
+5. **Output Format**: Define how information should be presented
+6. **Time Relevance**: Specify if recency matters
+
+Original query:
 ${userPrompt}
 
-Return only the improved version.`
+Respond with ONLY the optimized prompt. No explanations, no meta-commentary, just the improved prompt itself.`
     },
     'www.perplexity.ai': {
       selectors: [
@@ -114,11 +158,20 @@ Return only the improved version.`
       name: 'Perplexity',
       type: 'perplexity',
       submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `As a prompt engineering expert, improve this prompt for better search and AI responses:
+      improvementPrompt: (userPrompt) => `You are a prompt engineering expert specializing in search and research queries for Perplexity AI. Optimize this prompt for comprehensive, well-sourced responses.
 
+Optimization Strategy:
+1. **Search Intent**: Clarify what information is being sought
+2. **Scope Definition**: Define the breadth and depth of research needed
+3. **Source Preferences**: Specify types of sources if relevant (academic, recent news, technical docs)
+4. **Structure**: Organize multi-faceted questions clearly
+5. **Output Format**: Define how information should be presented
+6. **Time Relevance**: Specify if recency matters
+
+Original query:
 ${userPrompt}
 
-Return only the improved version.`
+Respond with ONLY the optimized prompt. No explanations, no meta-commentary, just the improved prompt itself.`
     }
   };
 
@@ -248,10 +301,65 @@ Return only the improved version.`
   }
 
   /**
+   * Check if widget should be hidden
+   */
+  async function shouldHideWidget() {
+    try {
+      const result = await chrome.storage.local.get('hideUntil');
+      if (result.hideUntil) {
+        const hideUntil = new Date(result.hideUntil);
+        const now = new Date();
+        if (now < hideUntil) {
+          const minutes = Math.ceil((hideUntil - now) / 60000);
+          console.log(`PromptSculptor: Widget hidden for ${minutes} more minutes`);
+          return true;
+        } else {
+          // Hide period expired, clear it
+          await chrome.storage.local.remove('hideUntil');
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('PromptSculptor: Error checking hide status:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Handle hide widget for 30 minutes
+   */
+  async function handleHideWidget() {
+    const hideUntil = new Date();
+    hideUntil.setMinutes(hideUntil.getMinutes() + 30);
+
+    try {
+      await chrome.storage.local.set({ hideUntil: hideUntil.toISOString() });
+
+      // Hide the widget
+      if (sculptorWidget) {
+        sculptorWidget.style.display = 'none';
+      }
+
+      showNotification('Widget hidden for 30 minutes', 'success');
+      console.log('PromptSculptor: Widget hidden until', hideUntil.toLocaleTimeString());
+    } catch (error) {
+      console.error('PromptSculptor: Error hiding widget:', error);
+      showNotification('Error hiding widget', 'error');
+    }
+  }
+
+  /**
    * Attach the PromptSculptor widget to an input field
    */
-  function attachWidget(inputElement, config) {
+  async function attachWidget(inputElement, config) {
     console.log('PromptSculptor: Attaching widget to input');
+
+    // Check if widget should be hidden
+    if (await shouldHideWidget()) {
+      console.log('PromptSculptor: Widget is hidden, skipping attachment');
+      return;
+    }
+
     currentInputField = inputElement;
 
     // Create the widget button if it doesn't exist
@@ -297,7 +405,7 @@ Return only the improved version.`
     widget.className = 'ps-widget';
     widget.innerHTML = `
       <div class="ps-widget-container">
-        <div class="ps-widget-label">PromptSculptor</div>
+        <button class="ps-widget-label" id="ps-label-btn" title="Click to improve prompt">PromptSculptor</button>
         <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
@@ -322,6 +430,14 @@ Return only the improved version.`
             <path d="M12 6v6l4 2"/>
           </svg>
           <span>History</span>
+        </button>
+        <div class="ps-dropdown-divider"></div>
+        <button class="ps-dropdown-item" id="ps-menu-hide">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+          <span>Hide for 30 minutes</span>
         </button>
       </div>
     `;
@@ -351,13 +467,27 @@ Return only the improved version.`
    * Setup event listeners
    */
   function setupEventListeners(inputElement, config) {
+    const labelBtn = document.getElementById('ps-label-btn');
     const improveBtn = document.getElementById('ps-improve-btn');
     const dropdownToggle = document.getElementById('ps-dropdown-toggle');
     const dropdownMenu = document.getElementById('ps-dropdown-menu');
     const menuLibrary = document.getElementById('ps-menu-library');
     const menuHistory = document.getElementById('ps-menu-history');
+    const menuHide = document.getElementById('ps-menu-hide');
 
-    // Improve button
+    // Label button (main trigger for improvement)
+    if (labelBtn) {
+      const newLabelBtn = labelBtn.cloneNode(true);
+      labelBtn.parentNode.replaceChild(newLabelBtn, labelBtn);
+
+      newLabelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleImproveClick(inputElement, config);
+      });
+    }
+
+    // Improve button (star icon)
     if (improveBtn) {
       const newImproveBtn = improveBtn.cloneNode(true);
       improveBtn.parentNode.replaceChild(newImproveBtn, improveBtn);
@@ -405,6 +535,19 @@ Return only the improved version.`
         e.stopPropagation();
         document.getElementById('ps-dropdown-menu').classList.remove('ps-show');
         handleHistoryClick();
+      });
+    }
+
+    // Hide for 30 minutes menu item
+    if (menuHide) {
+      const newMenuHide = menuHide.cloneNode(true);
+      menuHide.parentNode.replaceChild(newMenuHide, menuHide);
+
+      newMenuHide.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('ps-dropdown-menu').classList.remove('ps-show');
+        handleHideWidget();
       });
     }
 
