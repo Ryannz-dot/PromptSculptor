@@ -1,0 +1,37 @@
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+.temp/
+
+# Build artifacts
+dist/
+build/
+
+# Node modules (if using any build tools in future)
+node_modules/
+
+# Extension artifacts
+*.crx
+*.pem
+*.zip
+
+# User data (for testing)
+test-data/
+
+# Screenshots and media for documentation
+screenshots/

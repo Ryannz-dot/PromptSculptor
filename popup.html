@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PromptSculptor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          <h1>PromptSculptor</h1>
+        </div>
+        <p class="tagline">Transform your prompts into masterpieces</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="library">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+        </svg>
+        Library
+      </button>
+      <button class="tab" data-tab="history">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        History
+      </button>
+      <button class="tab" data-tab="settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Library Tab -->
+      <div class="tab-panel active" id="library-panel">
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" id="library-search" placeholder="Search your prompts...">
+        </div>
+
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="favorites">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            Favorites
+          </button>
+          <button class="filter-btn" data-filter="recent">Recent</button>
+        </div>
+
+        <div id="library-list" class="prompt-list">
+          <!-- Prompts will be loaded here -->
+        </div>
+
+        <div class="empty-state" id="library-empty" style="display: none;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+          </svg>
+          <h3>No prompts in your library</h3>
+          <p>Visit any LLM website and start improving your prompts!</p>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div class="tab-panel" id="history-panel">
+        <div class="panel-header">
+          <h2>Improvement History</h2>
+          <button class="btn-secondary btn-sm" id="clear-history">Clear All</button>
+        </div>
+
+        <div id="history-list" class="history-list">
+          <!-- History items will be loaded here -->
+        </div>
+
+        <div class="empty-state" id="history-empty" style="display: none;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <h3>No history yet</h3>
+          <p>Your improved prompts will appear here</p>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="tab-panel" id="settings-panel">
+        <div class="settings-section">
+          <h3>General Settings</h3>
+
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="setting-auto-detect">
+              <span>Auto-detect LLM input fields</span>
+            </label>
+            <p class="setting-description">Automatically show the widget on supported websites</p>
+          </div>
+
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="setting-show-suggestions">
+              <span>Show improvement suggestions</span>
+            </label>
+            <p class="setting-description">Display tips for improving your prompts</p>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Data Management</h3>
+
+          <div class="setting-actions">
+            <button class="btn-secondary" id="export-data">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              Export Data
+            </button>
+            <button class="btn-secondary" id="import-data">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              Import Data
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-prompts">0</div>
+              <div class="stat-label">Saved Prompts</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-history">0</div>
+              <div class="stat-label">History Items</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-favorites">0</div>
+              <div class="stat-label">Favorites</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>About</h3>
+          <div class="about-info">
+            <p><strong>PromptSculptor</strong> v1.0.0</p>
+            <p>Transform your prompts for better LLM responses</p>
+            <div class="links">
+              <a href="https://github.com/yourusername/promptsculptor" target="_blank">GitHub</a>
+              <a href="#" id="view-tutorial">Tutorial</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input for import -->
+  <input type="file" id="import-file-input" accept=".json" style="display: none;">
+
+  <!-- Scripts -->
+  <script src="storage.js"></script>
+  <script src="prompt-improver.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
