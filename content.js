@@ -17,16 +17,37 @@
   const SITE_CONFIGS = {
     'chat.openai.com': {
       selectors: [
-        'textarea[id*="prompt"]',
-        'textarea[placeholder*="Message"]',
-        'textarea[data-id]',
         '#prompt-textarea',
+        'textarea[placeholder*="Message"]',
+        'textarea[placeholder*="message"]',
+        'textarea[data-id]',
         'textarea',
         'div[contenteditable="true"][role="textbox"]'
       ],
       name: 'ChatGPT',
       type: 'chatgpt',
-      submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"]',
+      submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
+      improvementPrompt: (userPrompt) => `You are a prompt engineering expert. Improve this prompt to get the best possible response from an AI assistant. Make it more specific, well-structured, and clear. Add context, constraints, and output format where appropriate.
+
+Original prompt:
+"""
+${userPrompt}
+"""
+
+Respond ONLY with the improved prompt, nothing else. Do not add explanations or meta-commentary.`
+    },
+    'chatgpt.com': {
+      selectors: [
+        '#prompt-textarea',
+        'textarea[placeholder*="Message"]',
+        'textarea[placeholder*="message"]',
+        'textarea[data-id]',
+        'textarea',
+        'div[contenteditable="true"][role="textbox"]'
+      ],
+      name: 'ChatGPT',
+      type: 'chatgpt',
+      submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
       improvementPrompt: (userPrompt) => `You are a prompt engineering expert. Improve this prompt to get the best possible response from an AI assistant. Make it more specific, well-structured, and clear. Add context, constraints, and output format where appropriate.
 
 Original prompt:
@@ -74,6 +95,20 @@ Return only the improved version.`
    */
   function init() {
     console.log('PromptSculptor: Initializing...');
+    console.log('PromptSculptor: Current URL:', window.location.href);
+    console.log('PromptSculptor: Hostname:', window.location.hostname);
+    console.log('PromptSculptor: Document ready state:', document.readyState);
+
+    // Check if dependencies loaded
+    if (typeof StorageManager === 'undefined') {
+      console.error('PromptSculptor: StorageManager not loaded!');
+      return;
+    }
+    if (typeof PromptImprover === 'undefined') {
+      console.error('PromptSculptor: PromptImprover not loaded!');
+      return;
+    }
+    console.log('PromptSculptor: Dependencies loaded successfully');
 
     // Inject styles
     injectStyles();
@@ -132,28 +167,41 @@ Return only the improved version.`
 
     if (!config) {
       console.log('PromptSculptor: Unsupported site:', hostname);
+      console.log('PromptSculptor: Available sites:', Object.keys(SITE_CONFIGS));
       return;
     }
 
     console.log('PromptSculptor: Searching for input fields on', config.name);
+    console.log('PromptSculptor: Trying selectors:', config.selectors);
 
+    let foundAny = false;
     for (const selector of config.selectors) {
       try {
         const inputs = document.querySelectorAll(selector);
+        console.log(`PromptSculptor: Selector "${selector}" found ${inputs.length} element(s)`);
 
         inputs.forEach((input, index) => {
+          const alreadyAttached = input.dataset.promptSculptorAttached;
+          const visible = isVisible(input);
+          console.log(`PromptSculptor: Element ${index} - attached: ${alreadyAttached}, visible: ${visible}`);
+
           // Check if it's visible and not already attached
-          if (!input.dataset.promptSculptorAttached && isVisible(input)) {
-            console.log('PromptSculptor: Found input field:', selector, index);
+          if (!alreadyAttached && visible) {
+            console.log('PromptSculptor: ✓ Attaching to input field:', selector, index);
             attachWidget(input, config);
             input.dataset.promptSculptorAttached = 'true';
+            foundAny = true;
           }
         });
 
-        if (inputs.length > 0) break; // Found inputs, stop searching
+        if (foundAny) break; // Found and attached, stop searching
       } catch (e) {
         console.error('PromptSculptor: Error with selector', selector, e);
       }
+    }
+
+    if (!foundAny) {
+      console.log('PromptSculptor: No suitable input fields found yet. Will try again...');
     }
   }
 

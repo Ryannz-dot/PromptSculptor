@@ -9,6 +9,7 @@
   ],
   "host_permissions": [
     "https://chat.openai.com/*",
+    "https://chatgpt.com/*",
     "https://claude.ai/*",
     "https://bard.google.com/*",
     "https://gemini.google.com/*",
@@ -24,6 +25,7 @@
     {
       "matches": [
         "https://chat.openai.com/*",
+        "https://chatgpt.com/*",
         "https://claude.ai/*",
         "https://bard.google.com/*",
         "https://gemini.google.com/*",
@@ -32,9 +34,10 @@
         "https://poe.com/*",
         "https://*.anthropic.com/*"
       ],
-      "js": ["content.js"],
+      "js": ["storage.js", "prompt-improver.js", "content.js"],
       "css": ["content.css"],
-      "run_at": "document_end"
+      "run_at": "document_idle",
+      "all_frames": false
     }
   ],
   "action": {
