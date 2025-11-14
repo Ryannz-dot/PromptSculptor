@@ -297,25 +297,32 @@ Return only the improved version.`
     widget.className = 'ps-widget';
     widget.innerHTML = `
       <div class="ps-widget-container">
+        <div class="ps-widget-label">PromptSculptor</div>
         <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
           </svg>
         </button>
-        <div class="ps-secondary-buttons">
-          <button class="ps-library-button" id="ps-library-btn" title="Prompt Library">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
-            </svg>
-          </button>
-          <button class="ps-history-button" id="ps-history-btn" title="History">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 6v6l4 2"/>
-            </svg>
-          </button>
-        </div>
-        <div class="ps-widget-label">PromptSculptor</div>
+        <button class="ps-dropdown-toggle" id="ps-dropdown-toggle" title="Library & History">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="ps-dropdown-menu" id="ps-dropdown-menu">
+        <button class="ps-dropdown-item" id="ps-menu-library">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+          </svg>
+          <span>Prompt Library</span>
+        </button>
+        <button class="ps-dropdown-item" id="ps-menu-history">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span>History</span>
+        </button>
       </div>
     `;
 
@@ -328,14 +335,14 @@ Return only the improved version.`
   function positionWidget(widget, inputElement) {
     const rect = inputElement.getBoundingClientRect();
 
-    // Position above the input field, aligned to the right
+    // Position at the right edge, more above the input field
     widget.style.position = 'fixed';
-    widget.style.right = `${window.innerWidth - rect.right}px`;
-    widget.style.top = `${rect.top - 50}px`; // 50px above the input
+    widget.style.right = `${window.innerWidth - rect.right}px`; // Align with right edge
+    widget.style.top = `${rect.top - 60}px`; // 60px above the input
     widget.style.zIndex = '999999';
 
     // If widget would be off-screen at the top, position it at the top with margin
-    if (rect.top < 60) {
+    if (rect.top < 70) {
       widget.style.top = '10px';
     }
   }
@@ -345,11 +352,13 @@ Return only the improved version.`
    */
   function setupEventListeners(inputElement, config) {
     const improveBtn = document.getElementById('ps-improve-btn');
-    const libraryBtn = document.getElementById('ps-library-btn');
-    const historyBtn = document.getElementById('ps-history-btn');
+    const dropdownToggle = document.getElementById('ps-dropdown-toggle');
+    const dropdownMenu = document.getElementById('ps-dropdown-menu');
+    const menuLibrary = document.getElementById('ps-menu-library');
+    const menuHistory = document.getElementById('ps-menu-history');
 
+    // Improve button
     if (improveBtn) {
-      // Remove old listeners
       const newImproveBtn = improveBtn.cloneNode(true);
       improveBtn.parentNode.replaceChild(newImproveBtn, improveBtn);
 
@@ -360,27 +369,53 @@ Return only the improved version.`
       });
     }
 
-    if (libraryBtn) {
-      const newLibraryBtn = libraryBtn.cloneNode(true);
-      libraryBtn.parentNode.replaceChild(newLibraryBtn, libraryBtn);
+    // Dropdown toggle
+    if (dropdownToggle && dropdownMenu) {
+      const newToggle = dropdownToggle.cloneNode(true);
+      dropdownToggle.parentNode.replaceChild(newToggle, dropdownToggle);
 
-      newLibraryBtn.addEventListener('click', (e) => {
+      newToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        const menu = document.getElementById('ps-dropdown-menu');
+        menu.classList.toggle('ps-show');
+      });
+    }
+
+    // Library menu item
+    if (menuLibrary) {
+      const newMenuLibrary = menuLibrary.cloneNode(true);
+      menuLibrary.parentNode.replaceChild(newMenuLibrary, menuLibrary);
+
+      newMenuLibrary.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('ps-dropdown-menu').classList.remove('ps-show');
         handleLibraryClick(inputElement);
       });
     }
 
-    if (historyBtn) {
-      const newHistoryBtn = historyBtn.cloneNode(true);
-      historyBtn.parentNode.replaceChild(newHistoryBtn, historyBtn);
+    // History menu item
+    if (menuHistory) {
+      const newMenuHistory = menuHistory.cloneNode(true);
+      menuHistory.parentNode.replaceChild(newMenuHistory, menuHistory);
 
-      newHistoryBtn.addEventListener('click', (e) => {
+      newMenuHistory.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        document.getElementById('ps-dropdown-menu').classList.remove('ps-show');
         handleHistoryClick();
       });
     }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('ps-dropdown-menu');
+      const widget = document.getElementById('promptsculptor-widget');
+      if (menu && widget && !widget.contains(e.target)) {
+        menu.classList.remove('ps-show');
+      }
+    });
   }
 
   /**
