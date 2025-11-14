@@ -8,65 +8,130 @@
   position: fixed;
   z-index: 999999;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ps-widget-container {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
-  background: white;
-  border-radius: 12px;
-  padding: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  padding: 6px 6px 6px 6px;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 48px; /* Collapsed state - just main button */
+  overflow: hidden;
+  position: relative;
 }
 
+.ps-widget:hover .ps-widget-container,
 .ps-widget.ps-active .ps-widget-container {
-  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
-  border-color: #8b5cf6;
+  max-width: 280px; /* Expanded state */
+  padding: 6px 12px 6px 6px;
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(124, 58, 237, 1) 100%);
+}
+
+/* Widget Label - only shows on hover */
+.ps-widget-label {
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+  margin-left: auto;
+  pointer-events: none;
+}
+
+.ps-widget:hover .ps-widget-label,
+.ps-widget.ps-active .ps-widget-label {
+  opacity: 0.95;
+  transform: translateX(0);
+}
+
+/* Secondary buttons container */
+.ps-secondary-buttons {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
+  pointer-events: none;
+}
+
+.ps-widget:hover .ps-secondary-buttons,
+.ps-widget.ps-active .ps-secondary-buttons {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
 }
 
 /* Widget Buttons */
-.ps-main-button,
-.ps-library-button,
-.ps-history-button {
+.ps-main-button {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
+  min-width: 36px;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
   color: white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .ps-library-button,
 .ps-history-button {
-  background: #f3f4f6;
-  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
 }
 
 .ps-main-button:hover {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .ps-library-button:hover,
 .ps-history-button:hover {
-  background: #e5e7eb;
-  color: #374151;
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
 }
 
 .ps-main-button:active,
 .ps-library-button:active,
 .ps-history-button:active {
   transform: scale(0.95);
+}
+
+/* Disabled state */
+.ps-main-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 /* Modal */

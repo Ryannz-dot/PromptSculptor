@@ -87,6 +87,38 @@ Provide only the improved prompt without any explanation.`
 ${userPrompt}
 
 Return only the improved version.`
+    },
+    'perplexity.ai': {
+      selectors: [
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="follow"]',
+        'textarea',
+        'div[contenteditable="true"]'
+      ],
+      name: 'Perplexity',
+      type: 'perplexity',
+      submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
+      improvementPrompt: (userPrompt) => `As a prompt engineering expert, improve this prompt for better search and AI responses:
+
+${userPrompt}
+
+Return only the improved version.`
+    },
+    'www.perplexity.ai': {
+      selectors: [
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="follow"]',
+        'textarea',
+        'div[contenteditable="true"]'
+      ],
+      name: 'Perplexity',
+      type: 'perplexity',
+      submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
+      improvementPrompt: (userPrompt) => `As a prompt engineering expert, improve this prompt for better search and AI responses:
+
+${userPrompt}
+
+Return only the improved version.`
     }
   };
 
@@ -265,22 +297,25 @@ Return only the improved version.`
     widget.className = 'ps-widget';
     widget.innerHTML = `
       <div class="ps-widget-container">
-        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI (PromptSculptor)">
+        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
           </svg>
         </button>
-        <button class="ps-library-button" id="ps-library-btn" title="Prompt Library">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
-          </svg>
-        </button>
-        <button class="ps-history-button" id="ps-history-btn" title="History">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
-          </svg>
-        </button>
+        <div class="ps-secondary-buttons">
+          <button class="ps-library-button" id="ps-library-btn" title="Prompt Library">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+            </svg>
+          </button>
+          <button class="ps-history-button" id="ps-history-btn" title="History">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="ps-widget-label">PromptSculptor</div>
       </div>
     `;
 
@@ -293,11 +328,16 @@ Return only the improved version.`
   function positionWidget(widget, inputElement) {
     const rect = inputElement.getBoundingClientRect();
 
-    // Position at bottom-right of input field
+    // Position above the input field, aligned to the right
     widget.style.position = 'fixed';
-    widget.style.right = `${window.innerWidth - rect.right + 10}px`;
-    widget.style.bottom = `${window.innerHeight - rect.bottom + 10}px`;
+    widget.style.right = `${window.innerWidth - rect.right}px`;
+    widget.style.top = `${rect.top - 50}px`; // 50px above the input
     widget.style.zIndex = '999999';
+
+    // If widget would be off-screen at the top, position it at the top with margin
+    if (rect.top < 60) {
+      widget.style.top = '10px';
+    }
   }
 
   /**
