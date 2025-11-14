@@ -6,11 +6,12 @@ PromptSculptor is a powerful Chrome extension that automatically improves your p
 
 ## 🌟 Features
 
-### Intelligent Prompt Improvement
-- **Automatic Enhancement**: Analyzes and improves your prompts using industry best practices
-- **Structure Optimization**: Adds clear organization, context, and formatting to your prompts
-- **Smart Suggestions**: Provides actionable tips for better prompt engineering
-- **Before/After Comparison**: See exactly how your prompt was improved
+### AI-Powered Prompt Improvement
+- **Uses Your LLM Session**: Leverages the AI you're already using (ChatGPT, Claude, Gemini) to improve your prompts
+- **Background Processing**: Sends a meta-prompt to the LLM in the background using your active session
+- **Real AI Enhancement**: Gets actual AI-generated improvements, not just hardcoded rules
+- **Before/After Comparison**: See exactly how the AI enhanced your prompt
+- **Smart & Adaptive**: Each LLM improves prompts in its own optimized way
 
 ### Prompt Library
 - **Save & Organize**: Store your best prompts for quick reuse
@@ -75,10 +76,12 @@ PromptSculptor is a powerful Chrome extension that automatically improves your p
 2. **Type Your Prompt**
    - Start typing your question or instruction in the chat input
 
-3. **Improve Your Prompt**
+3. **Improve Your Prompt with AI**
    - Click the star icon ✨ in the PromptSculptor widget
-   - Review the improved version with highlighted changes
-   - See what improvements were made and why
+   - The extension uses the LLM itself to improve your prompt in the background
+   - Wait a few seconds for the AI to generate an improved version
+   - Review the AI-enhanced prompt in the side-by-side comparison modal
+   - Edit the improved prompt if needed
    - Click "Use This Prompt" to apply it to the input field
 
 4. **Save to Library** (Optional)
@@ -128,9 +131,21 @@ PromptSculptor works seamlessly on:
 
 More platforms coming soon!
 
-## 💡 Prompt Improvement Features
+## 🔧 How It Works
 
-PromptSculptor enhances your prompts by:
+PromptSculptor uses a clever approach to improve your prompts:
+
+1. **You write a prompt** - Type your initial question or instruction
+2. **Extension sends a meta-prompt** - Your prompt is wrapped in a "prompt engineering expert" meta-prompt
+3. **LLM improves it** - The AI you're already using (ChatGPT/Claude/Gemini) processes it in the background
+4. **You get the improved version** - The extension extracts the response and shows you the enhanced prompt
+5. **Original is restored** - Your input field is automatically restored to show the original or improved prompt
+
+This means you get **real AI-powered improvements** using the LLM's own intelligence, not just template-based rules!
+
+## 💡 What Makes Prompts Better
+
+The LLMs typically enhance your prompts by:
 
 ### 1. Adding Context
 Defines the role or perspective for better responses:

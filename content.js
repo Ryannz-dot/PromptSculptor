@@ -1,6 +1,6 @@
 /**
  * PromptSculptor - Content Script
- * Detects LLM input fields and injects the improvement UI
+ * Detects LLM input fields and uses the LLM's own session to improve prompts
  */
 
 (function() {
@@ -11,48 +11,61 @@
   let improverModal = null;
   let dropdownMenu = null;
   const storage = new StorageManager();
-  const improver = new PromptImprover();
+  let isImproving = false;
 
   // Configuration for different LLM sites
   const SITE_CONFIGS = {
     'chat.openai.com': {
       selectors: [
-        '#prompt-textarea',
+        'textarea[id*="prompt"]',
+        'textarea[placeholder*="Message"]',
         'textarea[data-id]',
-        'textarea.m-0',
-        'textarea[placeholder*="Message"]'
+        '#prompt-textarea',
+        'textarea',
+        'div[contenteditable="true"][role="textbox"]'
       ],
-      name: 'ChatGPT'
+      name: 'ChatGPT',
+      type: 'chatgpt',
+      submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"]',
+      improvementPrompt: (userPrompt) => `You are a prompt engineering expert. Improve this prompt to get the best possible response from an AI assistant. Make it more specific, well-structured, and clear. Add context, constraints, and output format where appropriate.
+
+Original prompt:
+"""
+${userPrompt}
+"""
+
+Respond ONLY with the improved prompt, nothing else. Do not add explanations or meta-commentary.`
     },
     'claude.ai': {
       selectors: [
         'div[contenteditable="true"]',
-        'textarea',
-        'div.ProseMirror'
+        'div.ProseMirror',
+        'textarea'
       ],
-      name: 'Claude'
+      name: 'Claude',
+      type: 'claude',
+      submitSelector: 'button[aria-label*="Send"]',
+      improvementPrompt: (userPrompt) => `As a prompt engineering expert, improve this prompt for maximum effectiveness. Enhance clarity, add structure, specify output format, and include relevant context.
+
+Original:
+${userPrompt}
+
+Provide only the improved prompt without any explanation.`
     },
     'gemini.google.com': {
       selectors: [
-        'rich-textarea',
+        'rich-textarea .ql-editor',
         'div[contenteditable="true"]',
         'textarea'
       ],
-      name: 'Gemini'
-    },
-    'perplexity.ai': {
-      selectors: [
-        'textarea',
-        'div[contenteditable="true"]'
-      ],
-      name: 'Perplexity'
-    },
-    'poe.com': {
-      selectors: [
-        'textarea',
-        'div[contenteditable="true"]'
-      ],
-      name: 'Poe'
+      name: 'Gemini',
+      type: 'gemini',
+      submitSelector: 'button[aria-label*="Send"]',
+      improvementPrompt: (userPrompt) => `Improve this prompt for better AI responses. Make it more specific, structured, and effective:
+
+${userPrompt}
+
+Return only the improved version.`
     }
   };
 
@@ -61,6 +74,9 @@
    */
   function init() {
     console.log('PromptSculptor: Initializing...');
+
+    // Inject styles
+    injectStyles();
 
     // Wait for page to load
     if (document.readyState === 'loading') {
@@ -71,11 +87,28 @@
   }
 
   /**
+   * Inject custom styles
+   */
+  function injectStyles() {
+    // CSS is already injected via manifest, but ensure it's loaded
+    if (!document.getElementById('promptsculptor-styles')) {
+      const link = document.createElement('link');
+      link.id = 'promptsculptor-styles';
+      link.rel = 'stylesheet';
+      link.href = chrome.runtime.getURL('content.css');
+      document.head.appendChild(link);
+    }
+  }
+
+  /**
    * Setup mutation observer to detect input fields
    */
   function setupObserver() {
+    console.log('PromptSculptor: Setting up observer...');
+
     // Initial scan
-    findAndAttachToInputs();
+    setTimeout(() => findAndAttachToInputs(), 1000);
+    setTimeout(() => findAndAttachToInputs(), 3000);
 
     // Watch for dynamically added elements
     const observer = new MutationObserver((mutations) => {
@@ -98,39 +131,81 @@
     const config = SITE_CONFIGS[hostname];
 
     if (!config) {
-      console.log('PromptSculptor: Unsupported site');
+      console.log('PromptSculptor: Unsupported site:', hostname);
       return;
     }
 
-    for (const selector of config.selectors) {
-      const inputs = document.querySelectorAll(selector);
+    console.log('PromptSculptor: Searching for input fields on', config.name);
 
-      inputs.forEach(input => {
-        if (!input.dataset.promptSculptorAttached) {
-          attachWidget(input);
-          input.dataset.promptSculptorAttached = 'true';
-        }
-      });
+    for (const selector of config.selectors) {
+      try {
+        const inputs = document.querySelectorAll(selector);
+
+        inputs.forEach((input, index) => {
+          // Check if it's visible and not already attached
+          if (!input.dataset.promptSculptorAttached && isVisible(input)) {
+            console.log('PromptSculptor: Found input field:', selector, index);
+            attachWidget(input, config);
+            input.dataset.promptSculptorAttached = 'true';
+          }
+        });
+
+        if (inputs.length > 0) break; // Found inputs, stop searching
+      } catch (e) {
+        console.error('PromptSculptor: Error with selector', selector, e);
+      }
     }
+  }
+
+  /**
+   * Check if element is visible
+   */
+  function isVisible(element) {
+    return element.offsetWidth > 0 &&
+           element.offsetHeight > 0 &&
+           window.getComputedStyle(element).display !== 'none' &&
+           window.getComputedStyle(element).visibility !== 'hidden';
   }
 
   /**
    * Attach the PromptSculptor widget to an input field
    */
-  function attachWidget(inputElement) {
+  function attachWidget(inputElement, config) {
+    console.log('PromptSculptor: Attaching widget to input');
     currentInputField = inputElement;
 
-    // Create the widget button
-    const widget = createWidget();
-    sculptorWidget = widget;
+    // Create the widget button if it doesn't exist
+    if (!sculptorWidget) {
+      const widget = createWidget();
+      sculptorWidget = widget;
+      document.body.appendChild(widget);
+    }
 
     // Position the widget near the input
-    positionWidget(widget, inputElement);
+    positionWidget(sculptorWidget, inputElement);
 
     // Add event listeners
-    setupEventListeners(inputElement);
+    setupEventListeners(inputElement, config);
 
-    console.log('PromptSculptor: Widget attached to input');
+    // Update position on scroll/resize
+    const updatePosition = () => {
+      if (sculptorWidget && inputElement && isVisible(inputElement)) {
+        positionWidget(sculptorWidget, inputElement);
+      }
+    };
+
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+
+    // Show widget on focus
+    inputElement.addEventListener('focus', () => {
+      if (sculptorWidget) {
+        sculptorWidget.classList.add('ps-active');
+        positionWidget(sculptorWidget, inputElement);
+      }
+    });
+
+    console.log('PromptSculptor: Widget attached successfully');
   }
 
   /**
@@ -142,7 +217,7 @@
     widget.className = 'ps-widget';
     widget.innerHTML = `
       <div class="ps-widget-container">
-        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt (PromptSculptor)">
+        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI (PromptSculptor)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
           </svg>
@@ -161,7 +236,6 @@
       </div>
     `;
 
-    document.body.appendChild(widget);
     return widget;
   }
 
@@ -176,57 +250,60 @@
     widget.style.right = `${window.innerWidth - rect.right + 10}px`;
     widget.style.bottom = `${window.innerHeight - rect.bottom + 10}px`;
     widget.style.zIndex = '999999';
-
-    // Update position on scroll/resize
-    const updatePosition = () => {
-      const newRect = inputElement.getBoundingClientRect();
-      widget.style.right = `${window.innerWidth - newRect.right + 10}px`;
-      widget.style.bottom = `${window.innerHeight - newRect.bottom + 10}px`;
-    };
-
-    window.addEventListener('scroll', updatePosition);
-    window.addEventListener('resize', updatePosition);
   }
 
   /**
    * Setup event listeners
    */
-  function setupEventListeners(inputElement) {
-    // Improve button
-    document.getElementById('ps-improve-btn')?.addEventListener('click', () => {
-      handleImproveClick(inputElement);
-    });
+  function setupEventListeners(inputElement, config) {
+    const improveBtn = document.getElementById('ps-improve-btn');
+    const libraryBtn = document.getElementById('ps-library-btn');
+    const historyBtn = document.getElementById('ps-history-btn');
 
-    // Library button
-    document.getElementById('ps-library-btn')?.addEventListener('click', () => {
-      handleLibraryClick(inputElement);
-    });
+    if (improveBtn) {
+      // Remove old listeners
+      const newImproveBtn = improveBtn.cloneNode(true);
+      improveBtn.parentNode.replaceChild(newImproveBtn, improveBtn);
 
-    // History button
-    document.getElementById('ps-history-btn')?.addEventListener('click', () => {
-      handleHistoryClick();
-    });
+      newImproveBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleImproveClick(inputElement, config);
+      });
+    }
 
-    // Focus tracking
-    inputElement.addEventListener('focus', () => {
-      if (sculptorWidget) {
-        sculptorWidget.classList.add('ps-active');
-      }
-    });
+    if (libraryBtn) {
+      const newLibraryBtn = libraryBtn.cloneNode(true);
+      libraryBtn.parentNode.replaceChild(newLibraryBtn, libraryBtn);
 
-    inputElement.addEventListener('blur', (e) => {
-      setTimeout(() => {
-        if (sculptorWidget && !sculptorWidget.contains(e.relatedTarget)) {
-          sculptorWidget.classList.remove('ps-active');
-        }
-      }, 100);
-    });
+      newLibraryBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleLibraryClick(inputElement);
+      });
+    }
+
+    if (historyBtn) {
+      const newHistoryBtn = historyBtn.cloneNode(true);
+      historyBtn.parentNode.replaceChild(newHistoryBtn, historyBtn);
+
+      newHistoryBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleHistoryClick();
+      });
+    }
   }
 
   /**
-   * Handle improve button click
+   * Handle improve button click - Uses LLM's own session
    */
-  function handleImproveClick(inputElement) {
+  async function handleImproveClick(inputElement, config) {
+    if (isImproving) {
+      showNotification('Already improving a prompt...', 'info');
+      return;
+    }
+
     const currentText = getInputText(inputElement);
 
     if (!currentText || currentText.trim().length === 0) {
@@ -234,58 +311,283 @@
       return;
     }
 
-    // Show improvement modal
-    showImprovementModal(currentText, inputElement);
+    if (currentText.trim().length < 10) {
+      showNotification('Prompt is too short to improve', 'warning');
+      return;
+    }
+
+    isImproving = true;
+    showLoadingIndicator();
+
+    try {
+      console.log('PromptSculptor: Improving prompt using', config.name);
+
+      // Use the LLM's own session to improve the prompt
+      const improvedPrompt = await improvePromptWithLLM(currentText, config, inputElement);
+
+      if (improvedPrompt && improvedPrompt !== currentText) {
+        // Show improvement modal
+        showImprovementModal(currentText, improvedPrompt, inputElement);
+
+        // Add to history
+        await storage.addToHistory({
+          original: currentText,
+          improved: improvedPrompt,
+          improvements: ['AI-powered improvement via ' + config.name],
+          platform: config.name
+        });
+      } else {
+        showNotification('Could not improve prompt. Try again or check console for errors.', 'error');
+      }
+    } catch (error) {
+      console.error('PromptSculptor: Error improving prompt:', error);
+      showNotification('Error: ' + error.message, 'error');
+    } finally {
+      isImproving = false;
+      hideLoadingIndicator();
+    }
+  }
+
+  /**
+   * Improve prompt using the LLM's own session
+   */
+  async function improvePromptWithLLM(userPrompt, config, inputElement) {
+    console.log('PromptSculptor: Starting LLM-based improvement');
+
+    // Get the improvement meta-prompt
+    const metaPrompt = config.improvementPrompt(userPrompt);
+
+    // Save current prompt
+    const originalPrompt = getInputText(inputElement);
+
+    try {
+      // Method 1: Try to use the site's API directly
+      if (config.type === 'chatgpt') {
+        return await improvewithChatGPT(metaPrompt, inputElement, config);
+      } else if (config.type === 'claude') {
+        return await improveWithClaude(metaPrompt, inputElement, config);
+      } else if (config.type === 'gemini') {
+        return await improveWithGemini(metaPrompt, inputElement, config);
+      }
+    } catch (error) {
+      console.error('PromptSculptor: LLM improvement failed:', error);
+      throw error;
+    } finally {
+      // Restore original prompt
+      setInputText(inputElement, originalPrompt);
+    }
+  }
+
+  /**
+   * Improve with ChatGPT by simulating a request
+   */
+  async function improvewithChatGPT(metaPrompt, inputElement, config) {
+    return new Promise((resolve, reject) => {
+      console.log('PromptSculptor: Using ChatGPT session');
+
+      // Set the meta-prompt
+      setInputText(inputElement, metaPrompt);
+
+      // Wait a bit for input to register
+      setTimeout(() => {
+        // Find and click send button
+        const sendButton = document.querySelector(config.submitSelector);
+
+        if (!sendButton) {
+          reject(new Error('Could not find send button'));
+          return;
+        }
+
+        // Click send
+        sendButton.click();
+
+        // Wait for response
+        let attempts = 0;
+        const maxAttempts = 60; // 30 seconds max
+
+        const checkForResponse = setInterval(() => {
+          attempts++;
+
+          // Look for the latest response
+          const responseElements = document.querySelectorAll('[data-message-author-role="assistant"]');
+
+          if (responseElements.length > 0) {
+            const latestResponse = responseElements[responseElements.length - 1];
+            const responseText = latestResponse.textContent || latestResponse.innerText;
+
+            // Check if response is complete (no generating indicator)
+            const isGenerating = document.querySelector('[data-testid*="stop"], button[aria-label*="Stop"]');
+
+            if (!isGenerating && responseText && responseText.length > 20) {
+              clearInterval(checkForResponse);
+
+              // Clean up the response
+              const improved = responseText.trim();
+
+              console.log('PromptSculptor: Got improved prompt from ChatGPT');
+              resolve(improved);
+            }
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(checkForResponse);
+            reject(new Error('Timeout waiting for ChatGPT response'));
+          }
+        }, 500);
+      }, 500);
+    });
+  }
+
+  /**
+   * Improve with Claude by simulating a request
+   */
+  async function improveWithClaude(metaPrompt, inputElement, config) {
+    return new Promise((resolve, reject) => {
+      console.log('PromptSculptor: Using Claude session');
+
+      // Set the meta-prompt
+      setInputText(inputElement, metaPrompt);
+
+      setTimeout(() => {
+        const sendButton = document.querySelector(config.submitSelector);
+
+        if (!sendButton) {
+          reject(new Error('Could not find send button'));
+          return;
+        }
+
+        sendButton.click();
+
+        let attempts = 0;
+        const maxAttempts = 60;
+
+        const checkForResponse = setInterval(() => {
+          attempts++;
+
+          // Look for Claude's response
+          const responseElements = document.querySelectorAll('div[data-is-streaming="false"]');
+
+          if (responseElements.length > 0) {
+            const latestResponse = responseElements[responseElements.length - 1];
+            const responseText = latestResponse.textContent || latestResponse.innerText;
+
+            if (responseText && responseText.length > 20) {
+              clearInterval(checkForResponse);
+              console.log('PromptSculptor: Got improved prompt from Claude');
+              resolve(responseText.trim());
+            }
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(checkForResponse);
+            reject(new Error('Timeout waiting for Claude response'));
+          }
+        }, 500);
+      }, 500);
+    });
+  }
+
+  /**
+   * Improve with Gemini by simulating a request
+   */
+  async function improveWithGemini(metaPrompt, inputElement, config) {
+    return new Promise((resolve, reject) => {
+      console.log('PromptSculptor: Using Gemini session');
+
+      setInputText(inputElement, metaPrompt);
+
+      setTimeout(() => {
+        const sendButton = document.querySelector(config.submitSelector);
+
+        if (!sendButton) {
+          reject(new Error('Could not find send button'));
+          return;
+        }
+
+        sendButton.click();
+
+        let attempts = 0;
+        const maxAttempts = 60;
+
+        const checkForResponse = setInterval(() => {
+          attempts++;
+
+          const responseElements = document.querySelectorAll('message-content model-response');
+
+          if (responseElements.length > 0) {
+            const latestResponse = responseElements[responseElements.length - 1];
+            const responseText = latestResponse.textContent || latestResponse.innerText;
+
+            if (responseText && responseText.length > 20) {
+              clearInterval(checkForResponse);
+              console.log('PromptSculptor: Got improved prompt from Gemini');
+              resolve(responseText.trim());
+            }
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(checkForResponse);
+            reject(new Error('Timeout waiting for Gemini response'));
+          }
+        }, 500);
+      }, 500);
+    });
+  }
+
+  /**
+   * Show loading indicator
+   */
+  function showLoadingIndicator() {
+    const btn = document.getElementById('ps-improve-btn');
+    if (btn) {
+      btn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ps-spinner">
+          <circle cx="12" cy="12" r="10" opacity="0.25"/>
+          <path d="M12 2a10 10 0 0 1 10 10" opacity="0.75"/>
+        </svg>
+      `;
+      btn.disabled = true;
+    }
+    showNotification('Improving your prompt with AI...', 'info');
+  }
+
+  /**
+   * Hide loading indicator
+   */
+  function hideLoadingIndicator() {
+    const btn = document.getElementById('ps-improve-btn');
+    if (btn) {
+      btn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
+      `;
+      btn.disabled = false;
+    }
   }
 
   /**
    * Show improvement modal
    */
-  function showImprovementModal(originalText, inputElement) {
+  function showImprovementModal(originalText, improvedText, inputElement) {
     // Create modal if it doesn't exist
     if (!improverModal) {
       improverModal = createImprovementModal();
       document.body.appendChild(improverModal);
     }
 
-    // Improve the prompt
-    const result = improver.improvePrompt(originalText);
-
-    if (!result.success) {
-      showNotification(result.error, 'error');
-      return;
-    }
-
     // Populate modal
     const originalTextarea = improverModal.querySelector('#ps-modal-original');
     const improvedTextarea = improverModal.querySelector('#ps-modal-improved');
-    const improvementsList = improverModal.querySelector('#ps-improvements-list');
 
-    originalTextarea.value = result.original;
-    improvedTextarea.value = result.improved;
-
-    // Show improvements
-    improvementsList.innerHTML = result.improvements.map(imp =>
-      `<li class="ps-improvement-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-        ${imp}
-      </li>`
-    ).join('');
+    originalTextarea.value = originalText;
+    improvedTextarea.value = improvedText;
 
     // Show modal
     improverModal.style.display = 'flex';
 
     // Setup modal actions
-    setupModalActions(improverModal, result, inputElement);
-
-    // Add to history
-    storage.addToHistory({
-      original: result.original,
-      improved: result.improved,
-      improvements: result.improvements
-    });
+    setupModalActions(improverModal, originalText, improvedText, inputElement);
   }
 
   /**
@@ -298,7 +600,7 @@
     modal.innerHTML = `
       <div class="ps-modal-content">
         <div class="ps-modal-header">
-          <h2>✨ Prompt Improvement</h2>
+          <h2>✨ AI-Improved Prompt</h2>
           <button class="ps-modal-close" id="ps-modal-close">&times;</button>
         </div>
         <div class="ps-modal-body">
@@ -309,13 +611,9 @@
             </div>
             <div class="ps-comparison-arrow">→</div>
             <div class="ps-comparison-section">
-              <h3>Improved Prompt</h3>
+              <h3>AI-Improved Prompt</h3>
               <textarea id="ps-modal-improved"></textarea>
             </div>
-          </div>
-          <div class="ps-improvements-section">
-            <h3>Improvements Made:</h3>
-            <ul id="ps-improvements-list"></ul>
           </div>
           <div class="ps-modal-actions">
             <button class="ps-btn ps-btn-secondary" id="ps-modal-copy">
@@ -349,7 +647,7 @@
   /**
    * Setup modal action buttons
    */
-  function setupModalActions(modal, result, inputElement) {
+  function setupModalActions(modal, original, improved, inputElement) {
     // Close button
     modal.querySelector('#ps-modal-close').onclick = () => {
       modal.style.display = 'none';
@@ -364,13 +662,14 @@
 
     // Save button
     modal.querySelector('#ps-modal-save').onclick = async () => {
-      const title = prompt('Enter a title for this prompt:', storage.generateTitle(result.improved));
+      const title = prompt('Enter a title for this prompt:', 'AI-Improved Prompt');
       if (title) {
+        const improvedText = modal.querySelector('#ps-modal-improved').value;
         await storage.savePrompt({
           title,
-          original: result.original,
-          improved: result.improved,
-          improvements: result.improvements
+          original: original,
+          improved: improvedText,
+          improvements: ['AI-powered improvement']
         });
         showNotification('Saved to library!', 'success');
       }
@@ -391,6 +690,9 @@
       }
     };
   }
+
+  // ... Rest of the functions (handleLibraryClick, handleHistoryClick, etc.) remain the same
+  // Copying from original implementation
 
   /**
    * Handle library button click
@@ -550,7 +852,6 @@
    * Show history dropdown
    */
   function showHistoryDropdown(history) {
-    // Remove existing dropdown
     if (dropdownMenu) {
       dropdownMenu.remove();
     }
@@ -567,9 +868,7 @@
           <div class="ps-history-item">
             <div class="ps-history-item-time">${formatDate(item.timestamp)}</div>
             <div class="ps-history-item-text">${escapeHtml(item.improved.substring(0, 100))}...</div>
-            <div class="ps-history-item-improvements">
-              ${item.improvements.slice(0, 2).map(imp => `<span class="ps-tag">${escapeHtml(imp)}</span>`).join('')}
-            </div>
+            ${item.platform ? `<div class="ps-history-platform">via ${item.platform}</div>` : ''}
           </div>
         `).join('')}
       </div>
@@ -578,13 +877,11 @@
     document.body.appendChild(dropdown);
     dropdownMenu = dropdown;
 
-    // Position near widget
     const widgetRect = sculptorWidget.getBoundingClientRect();
     dropdown.style.position = 'fixed';
     dropdown.style.right = `${window.innerWidth - widgetRect.right}px`;
     dropdown.style.bottom = `${window.innerHeight - widgetRect.top + 10}px`;
 
-    // Clear history button
     document.getElementById('ps-clear-history').addEventListener('click', async () => {
       if (confirm('Clear all history?')) {
         await storage.clearHistory();
@@ -593,7 +890,6 @@
       }
     });
 
-    // Close on click outside
     setTimeout(() => {
       document.addEventListener('click', function closeDropdown(e) {
         if (!dropdown.contains(e.target) && !sculptorWidget.contains(e.target)) {
@@ -610,7 +906,7 @@
   function getInputText(element) {
     if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
       return element.value;
-    } else if (element.contentEditable === 'true') {
+    } else if (element.contentEditable === 'true' || element.getAttribute('contenteditable') === 'true') {
       return element.innerText || element.textContent;
     }
     return '';
@@ -624,11 +920,15 @@
       element.value = text;
       element.dispatchEvent(new Event('input', { bubbles: true }));
       element.dispatchEvent(new Event('change', { bubbles: true }));
-    } else if (element.contentEditable === 'true') {
+    } else if (element.contentEditable === 'true' || element.getAttribute('contenteditable') === 'true') {
       element.innerText = text;
+      element.textContent = text;
       element.dispatchEvent(new Event('input', { bubbles: true }));
       element.dispatchEvent(new Event('change', { bubbles: true }));
     }
+
+    // Trigger focus to ensure input is recognized
+    element.focus();
   }
 
   /**
@@ -636,7 +936,6 @@
    */
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text).catch(err => {
-      // Fallback
       const textarea = document.createElement('textarea');
       textarea.value = text;
       document.body.appendChild(textarea);

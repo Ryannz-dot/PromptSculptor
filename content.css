@@ -537,3 +537,25 @@
 .ps-modal-body::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+/* Spinner Animation */
+.ps-spinner {
+  animation: ps-spin 1s linear infinite;
+}
+
+@keyframes ps-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* History Platform */
+.ps-history-platform {
+  font-size: 11px;
+  color: #8b5cf6;
+  font-weight: 500;
+  margin-top: 4px;
+}
