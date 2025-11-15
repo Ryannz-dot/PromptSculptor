@@ -26,6 +26,13 @@ chrome.runtime.onInstalled.addListener((details) => {
   } else if (details.reason === 'update') {
     console.log('PromptSculptor updated!');
   }
+
+  // Create context menu for quick actions
+  chrome.contextMenus.create({
+    id: 'improveSelection',
+    title: 'Improve with PromptSculptor',
+    contexts: ['selection']
+  });
 });
 
 // Listen for messages from content scripts
@@ -60,15 +67,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.action.onClicked.addListener((tab) => {
   // The popup will open automatically due to manifest configuration
   console.log('Extension icon clicked');
-});
-
-// Context menu for quick actions (optional enhancement)
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: 'improveSelection',
-    title: 'Improve with PromptSculptor',
-    contexts: ['selection']
-  });
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {

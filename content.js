@@ -393,6 +393,22 @@ Respond with ONLY the optimized prompt. No explanations, no meta-commentary, jus
       }
     });
 
+    // Optionally collapse widget on blur (after a delay to allow clicks)
+    inputElement.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (sculptorWidget && !document.getElementById('ps-dropdown-menu')?.classList.contains('ps-show')) {
+          // Only collapse if dropdown is not open
+          if (!improverModal || improverModal.style.display === 'none') {
+            // Only collapse if modal is not showing
+            const widget = document.getElementById('promptsculptor-widget');
+            if (widget && !widget.matches(':hover')) {
+              sculptorWidget.classList.remove('ps-active');
+            }
+          }
+        }
+      }, 200);
+    });
+
     console.log('PromptSculptor: Widget attached successfully');
   }
 
@@ -508,6 +524,22 @@ Respond with ONLY the optimized prompt. No explanations, no meta-commentary, jus
         e.preventDefault();
         e.stopPropagation();
         const menu = document.getElementById('ps-dropdown-menu');
+
+        // Check if dropdown should open upward
+        if (sculptorWidget) {
+          const widgetRect = sculptorWidget.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          const spaceBelow = windowHeight - widgetRect.bottom;
+          const menuHeight = 200; // Estimated menu height
+
+          // If not enough space below, open upward
+          if (spaceBelow < menuHeight && widgetRect.top > menuHeight) {
+            menu.classList.add('ps-dropdown-up');
+          } else {
+            menu.classList.remove('ps-dropdown-up');
+          }
+        }
+
         menu.classList.toggle('ps-show');
       });
     }
@@ -947,6 +979,11 @@ Respond with ONLY the optimized prompt. No explanations, no meta-commentary, jus
       setInputText(inputElement, improvedText);
       modal.style.display = 'none';
       showNotification('Prompt applied!', 'success');
+
+      // Auto-collapse widget back to icon state
+      if (sculptorWidget) {
+        sculptorWidget.classList.remove('ps-active');
+      }
     };
 
     // Click outside to close

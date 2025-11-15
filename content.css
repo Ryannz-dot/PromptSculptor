@@ -102,14 +102,16 @@
   min-width: 38px;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
   color: white;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   order: 2;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .ps-main-button:hover {
@@ -170,20 +172,32 @@
 /* Dropdown Menu */
 .ps-dropdown-menu {
   position: absolute;
-  top: 100%;
   right: 0;
-  margin-top: 8px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.05);
   min-width: 200px;
+  max-width: 250px;
   opacity: 0;
   transform: translateY(-10px) scale(0.95);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   z-index: 1000000;
   overflow: hidden;
+}
+
+/* Default: dropdown opens downward */
+.ps-dropdown-menu:not(.ps-dropdown-up) {
+  top: 100%;
+  margin-top: 8px;
+}
+
+/* When near bottom: dropdown opens upward */
+.ps-dropdown-menu.ps-dropdown-up {
+  bottom: 100%;
+  margin-bottom: 8px;
+  transform: translateY(10px) scale(0.95);
 }
 
 .ps-dropdown-menu.ps-show {
