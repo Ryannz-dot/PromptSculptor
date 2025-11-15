@@ -81,72 +81,64 @@
   position: fixed;
   z-index: 999999;
   font-family: var(--ps-font-family);
+  transition: opacity var(--ps-transition-fast);
 }
 
 .ps-widget-container {
-  display: flex;
-  gap: var(--ps-space-sm);
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  gap: 0; /* No gap - seamless pill */
   background: var(--ps-surface);
   backdrop-filter: blur(12px);
-  border-radius: var(--ps-radius-lg);
-  padding: var(--ps-space-xs);
-  box-shadow: var(--ps-shadow-md);
-  border: 1px solid var(--ps-border-primary);
+  border-radius: 999px; /* Full pill shape */
+  padding: 0;
+  box-shadow: var(--ps-shadow-lg);
+  border: 1px solid var(--ps-border);
   transition: all var(--ps-transition-slow);
-  width: 40px; /* Collapsed state */
-  overflow: visible;
+  overflow: hidden; /* Changed from visible to create seamless pill */
   position: relative;
+  height: 32px;
 }
 
 .ps-widget:hover .ps-widget-container,
 .ps-widget.ps-active .ps-widget-container {
-  width: 204px; /* Expanded state */
-  padding: var(--ps-space-xs) var(--ps-space-xs) var(--ps-space-xs) 10px;
-  box-shadow: var(--ps-shadow-lg);
-  background: var(--ps-surface-dark);
+  box-shadow: var(--ps-shadow-xl);
+  background: var(--ps-surface);
 }
 
-/* Widget Label - clickable button */
+/* Widget Label - clickable button (left section of pill) */
 .ps-widget-label {
-  color: var(--ps-primary);
-  font-size: var(--ps-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateX(20px);
-  transition: all var(--ps-transition-slow);
-  margin-right: auto;
-  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px 0 12px;
   border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: var(--ps-radius-md);
-  position: relative;
-  overflow: hidden;
+  background: white;
+  color: var(--ps-text-dark);
+  font-size: var(--ps-font-size-sm);
+  font-weight: 600;
   font-family: var(--ps-font-family);
-  text-shadow: 0 1px 2px rgba(139, 92, 246, 0.1);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--ps-transition-base);
+  border-radius: 999px 0 0 999px; /* Left pill edge */
+  position: relative;
 }
 
-.ps-widget:hover .ps-widget-label,
-.ps-widget.ps-active .ps-widget-label {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-  color: var(--ps-primary-light);
+.ps-widget-label::before {
+  content: '✨';
+  font-size: 14px;
+  display: inline-block;
+  margin-right: 2px;
 }
 
 .ps-widget-label:hover {
-  background: rgba(139, 92, 246, 0.1);
-  transform: translateX(0) scale(1.02);
-  color: var(--ps-primary-light);
+  background: var(--ps-surface-hover);
 }
 
 .ps-widget-label:active {
-  background: rgba(139, 92, 246, 0.2);
-  transform: translateX(0) scale(0.98);
+  transform: scale(0.98);
 }
 
 /* Loading state for label */
@@ -156,115 +148,49 @@
   width: 12px;
   height: 12px;
   margin-left: var(--ps-space-sm);
-  border: 2px solid var(--ps-primary-light);
+  border: 2px solid var(--ps-primary);
   border-top-color: transparent;
   border-radius: 50%;
   animation: ps-spin 0.6s linear infinite;
 }
 
-/* Ripple effect on click */
-.ps-widget-label::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.4s, height 0.4s;
-}
-
-.ps-widget-label:active::before {
-  width: 200px;
-  height: 200px;
-}
-
-/* Widget Buttons */
-.ps-main-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px; /* 15% smaller (38px * 0.85 ≈ 32px) */
-  height: 32px;
-  min-width: 32px;
-  border: none;
-  border-radius: 6px; /* Rectangular to match container */
-  background: #8b5cf6; /* Purple background for visibility */
-  backdrop-filter: blur(10px);
-  color: white;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0;
-  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
-  order: 2;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.ps-widget:hover .ps-main-button,
-.ps-widget.ps-active .ps-main-button {
-  background: #a78bfa; /* Lighter purple when active */
-  color: #000; /* Black icon when active */
-}
-
-.ps-main-button:hover {
-  background: #7c3aed;
-  transform: scale(1.08) rotate(12deg);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-}
-
-.ps-main-button:active {
-  transform: scale(0.95);
-}
-
-/* Disabled state */
-.ps-main-button:disabled {
+.ps-widget-label:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none !important;
 }
 
-/* Dropdown Toggle Button */
+/* Main star button - Hidden (functionality moved to label) */
+.ps-main-button {
+  display: none;
+}
+
+/* Dropdown Toggle Button - Dark right segment of pill */
 .ps-dropdown-toggle {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px; /* 15% smaller (28px * 0.85 ≈ 24px) */
-  height: 24px;
-  min-width: 24px;
+  width: 32px;
+  height: 32px;
   border: none;
-  border-radius: 4px; /* Rectangular */
-  background: #8b5cf6; /* Purple when inactive (initially hidden) */
-  backdrop-filter: blur(10px);
+  background: #0f172a; /* Dark segment */
   color: white;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--ps-transition-base);
   padding: 0;
-  opacity: 0;
-  transform: scale(0.8);
-  pointer-events: none;
-  order: 3;
-}
-
-.ps-widget:hover .ps-dropdown-toggle,
-.ps-widget.ps-active .ps-dropdown-toggle {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-  background: #a78bfa; /* Lighter purple when active/hover */
-  color: #000; /* Black icon when active */
+  border-radius: 0 999px 999px 0; /* Right pill edge */
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ps-dropdown-toggle:hover {
-  background: #7c3aed;
-  transform: scale(1.08);
-  color: #fff;
+  background: #1e293b;
 }
 
 .ps-dropdown-toggle:active {
   transform: scale(0.95);
+}
+
+.ps-dropdown-toggle svg {
+  font-size: 12px;
 }
 
 /* Dropdown Menu */
@@ -272,11 +198,12 @@
   position: absolute;
   right: 0;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  min-width: 200px;
+  border-radius: 10px;
+  box-shadow: 0 12px 45px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  min-width: 220px;
   max-width: 250px;
+  padding: 8px 0;
   opacity: 0;
   transform: translateY(-10px) scale(0.95);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -308,44 +235,41 @@
 .ps-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 8px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 8px 12px;
   border: none;
   background: white;
-  color: #374151;
-  font-size: 14px;
+  color: var(--ps-text-dark);
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--ps-transition-fast);
   text-align: left;
 }
 
-.ps-dropdown-item:first-child {
-  border-radius: 12px 12px 0 0;
-}
-
-.ps-dropdown-item:last-child {
-  border-radius: 0 0 12px 12px;
-}
-
 .ps-dropdown-item:hover {
-  background: #f3f4f6;
-  color: #8b5cf6;
+  background: var(--ps-surface-hover);
+  color: var(--ps-text-dark);
 }
 
 .ps-dropdown-item:hover svg {
-  transform: scale(1.1);
-  stroke: #8b5cf6;
+  stroke: var(--ps-primary);
 }
 
 .ps-dropdown-item svg {
   flex-shrink: 0;
-  transition: all 0.15s ease;
+  transition: stroke var(--ps-transition-fast);
+  width: 16px;
+  height: 16px;
 }
 
 .ps-dropdown-item span {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Dropdown Divider */
@@ -408,24 +332,32 @@
 }
 
 .ps-modal-close {
-  background: none;
-  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px; /* Fully circular */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  font-size: 32px;
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
+  font-size: 18px;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  transition: background 0.2s ease;
-  line-height: 1;
+  cursor: pointer;
+  transition: all var(--ps-transition-fast);
   padding: 0;
+  flex-shrink: 0;
 }
 
 .ps-modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.ps-modal-close:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
 
 .ps-modal-body {

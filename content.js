@@ -767,39 +767,40 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     widget.setAttribute('aria-label', 'PromptSculptor toolbar');
     widget.innerHTML = `
       <div class="ps-widget-container">
-        <button class="ps-widget-label" id="ps-label-btn" title="Click to improve prompt" aria-label="Improve prompt with PromptSculptor">PromptSculptor</button>
-        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI" aria-label="Improve prompt with AI">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-          </svg>
-        </button>
+        <button class="ps-widget-label" id="ps-label-btn" title="Click to improve prompt" aria-label="Improve prompt with PromptSculptor">Improve Prompt</button>
         <button class="ps-dropdown-toggle" id="ps-dropdown-toggle" title="Library & History" aria-label="Open library and history menu" aria-haspopup="menu" aria-expanded="false">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M6 9l6 6 6-6"/>
           </svg>
         </button>
       </div>
       <div class="ps-dropdown-menu" id="ps-dropdown-menu" role="menu" aria-label="PromptSculptor menu">
         <button class="ps-dropdown-item" id="ps-menu-library" role="menuitem">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
-          </svg>
-          <span>Prompt Library</span>
+          <span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+            </svg>
+            Prompt Library
+          </span>
         </button>
         <button class="ps-dropdown-item" id="ps-menu-history" role="menuitem">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
-          </svg>
-          <span>History</span>
+          <span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            History
+          </span>
         </button>
         <div class="ps-dropdown-divider"></div>
         <button class="ps-dropdown-item" id="ps-menu-hide" role="menuitem">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
-            <line x1="1" y1="1" x2="23" y2="23"/>
-          </svg>
-          <span>Hide for 30 minutes</span>
+          <span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+            Hide for 30 minutes
+          </span>
         </button>
       </div>
     `;
@@ -811,20 +812,29 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
    * Position the widget near the input field
    */
   function positionWidget(widget, inputElement) {
+    if (!widget || !inputElement) return;
+
     const rect = inputElement.getBoundingClientRect();
+    const widgetRect = widget.getBoundingClientRect();
 
-    // Position 20% more to the right from the right edge
-    const rightOffset = window.innerWidth - rect.right;
-    const adjustedRight = rightOffset * 0.8; // 20% more to the right (reduce offset by 20%)
+    // Calculate optimal positioning
+    const offsetY = 12; // Space above input
+    const offsetX = 0; // Align with right edge of input
 
-    widget.style.position = 'fixed';
-    widget.style.right = `${adjustedRight}px`; // 20% more to the right
-    widget.style.top = `${rect.top - 60}px`; // 60px above the input
+    // Position above and aligned to the right edge of input
+    const top = rect.top + window.scrollY - widgetRect.height - offsetY;
+    const left = rect.right + window.scrollX - widgetRect.width + offsetX;
+
+    widget.style.position = 'absolute';
+    widget.style.top = `${Math.max(10 + window.scrollY, top)}px`;
+    widget.style.left = `${left}px`;
     widget.style.zIndex = '999999';
 
-    // If widget would be off-screen at the top, position it at the top with margin
-    if (rect.top < 70) {
+    // Fallback to fixed positioning if input is at top of viewport
+    if (rect.top < widgetRect.height + offsetY + 10) {
+      widget.style.position = 'fixed';
       widget.style.top = '10px';
+      widget.style.left = `${rect.right - widgetRect.width}px`;
     }
   }
 
@@ -833,7 +843,6 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
    */
   function setupEventListeners(inputElement, config) {
     const labelBtn = document.getElementById('ps-label-btn');
-    const improveBtn = document.getElementById('ps-improve-btn');
     const dropdownToggle = document.getElementById('ps-dropdown-toggle');
     const dropdownMenu = document.getElementById('ps-dropdown-menu');
     const menuLibrary = document.getElementById('ps-menu-library');
@@ -846,18 +855,6 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
       labelBtn.parentNode.replaceChild(newLabelBtn, labelBtn);
 
       newLabelBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        handleImproveClick(inputElement, config);
-      });
-    }
-
-    // Improve button (star icon)
-    if (improveBtn) {
-      const newImproveBtn = improveBtn.cloneNode(true);
-      improveBtn.parentNode.replaceChild(newImproveBtn, improveBtn);
-
-      newImproveBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         handleImproveClick(inputElement, config);
@@ -1237,18 +1234,6 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
       labelBtn.disabled = true;
     }
 
-    // Update star button with spinner
-    const btn = document.getElementById('ps-improve-btn');
-    if (btn) {
-      btn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ps-spinner">
-          <circle cx="12" cy="12" r="10" opacity="0.25"/>
-          <path d="M12 2a10 10 0 0 1 10 10" opacity="0.75"/>
-        </svg>
-      `;
-      btn.disabled = true;
-    }
-
     showNotification('Improving your prompt with AI...', 'info');
   }
 
@@ -1261,17 +1246,6 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     if (labelBtn) {
       labelBtn.classList.remove('ps-loading');
       labelBtn.disabled = false;
-    }
-
-    // Restore star button
-    const btn = document.getElementById('ps-improve-btn');
-    if (btn) {
-      btn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-        </svg>
-      `;
-      btn.disabled = false;
     }
   }
 
