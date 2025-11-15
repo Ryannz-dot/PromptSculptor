@@ -678,18 +678,8 @@ Deliver ONLY the 6-section structured prompt. Zero commentary. Zero preamble. Be
       const widget = createWidget();
       sculptorWidget = widget;
 
-      // For ChatGPT, try to attach to toolbar; otherwise attach to body
-      const hostname = window.location.hostname;
-      if (hostname === 'chat.openai.com' || hostname === 'chatgpt.com') {
-        const result = findChatGPTToolbar();
-        if (result && result.toolbarEl) {
-          result.toolbarEl.appendChild(widget);
-        } else {
-          document.body.appendChild(widget);
-        }
-      } else {
-        document.body.appendChild(widget);
-      }
+      // Always attach to body for consistent behavior
+      document.body.appendChild(widget);
     }
 
     // Position the widget near the input
