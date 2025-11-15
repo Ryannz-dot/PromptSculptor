@@ -1,6 +1,8 @@
 /**
  * PromptSculptor - Content Script
  * Detects LLM input fields and uses the LLM's own session to improve prompts
+ *
+ * Built by Rehan Nawaz - https://rehannawaz.info
  */
 
 (function() {
@@ -27,23 +29,46 @@
       name: 'ChatGPT',
       type: 'chatgpt',
       submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
-      improvementPrompt: (userPrompt) => `You are an expert prompt engineer. Your task is to transform the user's prompt into a highly effective, structured prompt that will elicit the best possible response from an AI assistant.
+      improvementPrompt: (userPrompt) => `You are an elite prompt engineering specialist with expertise in cognitive linguistics, instructional design, and AI model behavior. Your mission: Transform this prompt into an optimized masterpiece that extracts maximum value from ChatGPT.
 
-Apply these prompt engineering principles:
-1. **Clarity & Specificity**: Make the request crystal clear and specific
-2. **Context & Background**: Add relevant context where beneficial
-3. **Structure**: Organize complex requests with clear sections
-4. **Output Format**: Specify desired response format when appropriate (e.g., bullet points, table, code, step-by-step)
-5. **Constraints**: Add relevant constraints or guidelines (length, style, tone)
-6. **Examples**: Include examples if they would clarify the request
-7. **Role Assignment**: Consider adding a role/persona if it enhances the response quality
+PROMPT ENHANCEMENT FRAMEWORK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Original prompt:
-"""
+1. ROLE & EXPERTISE
+   - Assign specific expertise/persona when beneficial
+   - Define domain knowledge level needed
+
+2. CLARITY & PRECISION
+   - Eliminate ambiguity
+   - Define technical terms
+   - Specify exact requirements
+
+3. CONTEXT & CONSTRAINTS
+   - Provide relevant background
+   - Set boundaries (length, style, tone, format)
+   - Specify what to include/exclude
+
+4. OUTPUT STRUCTURE
+   - Define exact format (markdown, JSON, code, table)
+   - Specify organization (sections, headers, numbering)
+   - Request step-by-step when appropriate
+
+5. QUALITY SIGNALS
+   - Add phrases like "detailed", "comprehensive", "with examples"
+   - Request explanations of reasoning
+   - Ask for multiple perspectives when relevant
+
+6. TASK DECOMPOSITION
+   - Break complex tasks into logical sub-tasks
+   - Number steps for multi-part requests
+
+ORIGINAL USER PROMPT:
+━━━━━━━━━━━━━━━━━━━━
 ${userPrompt}
-"""
+━━━━━━━━━━━━━━━━━━━━
 
-CRITICAL: Return ONLY the improved prompt, with NO explanations, NO meta-commentary, and NO wrapper text like "Here's the improved prompt:". Start directly with the improved prompt content.`
+OUTPUT INSTRUCTIONS:
+Return ONLY the enhanced prompt. NO preamble, NO "Here's the improved prompt:", NO explanations. Begin immediately with the improved prompt text.`
     },
     'chatgpt.com': {
       selectors: [
@@ -57,23 +82,46 @@ CRITICAL: Return ONLY the improved prompt, with NO explanations, NO meta-comment
       name: 'ChatGPT',
       type: 'chatgpt',
       submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
-      improvementPrompt: (userPrompt) => `You are an expert prompt engineer. Your task is to transform the user's prompt into a highly effective, structured prompt that will elicit the best possible response from an AI assistant.
+      improvementPrompt: (userPrompt) => `You are an elite prompt engineering specialist with expertise in cognitive linguistics, instructional design, and AI model behavior. Your mission: Transform this prompt into an optimized masterpiece that extracts maximum value from ChatGPT.
 
-Apply these prompt engineering principles:
-1. **Clarity & Specificity**: Make the request crystal clear and specific
-2. **Context & Background**: Add relevant context where beneficial
-3. **Structure**: Organize complex requests with clear sections
-4. **Output Format**: Specify desired response format when appropriate (e.g., bullet points, table, code, step-by-step)
-5. **Constraints**: Add relevant constraints or guidelines (length, style, tone)
-6. **Examples**: Include examples if they would clarify the request
-7. **Role Assignment**: Consider adding a role/persona if it enhances the response quality
+PROMPT ENHANCEMENT FRAMEWORK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Original prompt:
-"""
+1. ROLE & EXPERTISE
+   - Assign specific expertise/persona when beneficial
+   - Define domain knowledge level needed
+
+2. CLARITY & PRECISION
+   - Eliminate ambiguity
+   - Define technical terms
+   - Specify exact requirements
+
+3. CONTEXT & CONSTRAINTS
+   - Provide relevant background
+   - Set boundaries (length, style, tone, format)
+   - Specify what to include/exclude
+
+4. OUTPUT STRUCTURE
+   - Define exact format (markdown, JSON, code, table)
+   - Specify organization (sections, headers, numbering)
+   - Request step-by-step when appropriate
+
+5. QUALITY SIGNALS
+   - Add phrases like "detailed", "comprehensive", "with examples"
+   - Request explanations of reasoning
+   - Ask for multiple perspectives when relevant
+
+6. TASK DECOMPOSITION
+   - Break complex tasks into logical sub-tasks
+   - Number steps for multi-part requests
+
+ORIGINAL USER PROMPT:
+━━━━━━━━━━━━━━━━━━━━
 ${userPrompt}
-"""
+━━━━━━━━━━━━━━━━━━━━
 
-CRITICAL: Return ONLY the improved prompt, with NO explanations, NO meta-commentary, and NO wrapper text like "Here's the improved prompt:". Start directly with the improved prompt content.`
+OUTPUT INSTRUCTIONS:
+Return ONLY the enhanced prompt. NO preamble, NO "Here's the improved prompt:", NO explanations. Begin immediately with the improved prompt text.`
     },
     'claude.ai': {
       selectors: [
@@ -84,44 +132,114 @@ CRITICAL: Return ONLY the improved prompt, with NO explanations, NO meta-comment
       name: 'Claude',
       type: 'claude',
       submitSelector: 'button[aria-label*="Send"]',
-      improvementPrompt: (userPrompt) => `You are a world-class prompt engineer specializing in crafting prompts for Claude. Transform this prompt into an optimized version that leverages Claude's strengths.
+      improvementPrompt: (userPrompt) => `You are a master prompt engineer specializing in Claude's architecture. Claude excels with detailed instructions, structured thinking, and explicit expectations. Your task: Craft an exceptional prompt that leverages Claude's unique capabilities.
 
-Apply these principles:
-1. **Crystal Clear Intent**: Ensure the request is unambiguous and specific
-2. **Structured Thinking**: Break complex tasks into logical steps or sections
-3. **Context Provision**: Include necessary background information
-4. **Output Specification**: Define the desired format, length, and style
-5. **Quality Indicators**: Add constraints that signal high-quality expectations
-6. **Examples When Helpful**: Provide examples to clarify complex requirements
+CLAUDE OPTIMIZATION PROTOCOL:
+═════════════════════════════════
 
-Original prompt:
+⚡ STRENGTHS TO LEVERAGE:
+- Extended context understanding
+- Nuanced reasoning and analysis
+- Step-by-step logical thinking
+- Handling complex multi-part tasks
+- Thoughtful, balanced responses
+
+📋 ENHANCEMENT CHECKLIST:
+
+✓ ROLE DEFINITION
+  Assign expert persona with specific domain knowledge
+
+✓ TASK CLARITY
+  Crystal-clear objectives with zero ambiguity
+  Define success criteria explicitly
+
+✓ THINKING STRUCTURE
+  Request chain-of-thought reasoning when complex
+  Break multi-step tasks into numbered stages
+
+✓ OUTPUT FORMATTING
+  Specify exact structure (markdown, bullets, sections)
+  Define organization and hierarchy
+
+✓ CONTEXT & CONSTRAINTS
+  Provide essential background
+  Set explicit boundaries (tone, length, style, scope)
+
+✓ QUALITY MARKERS
+  Use phrases: "comprehensive", "detailed", "well-reasoned"
+  Request examples, citations, or evidence when relevant
+
+✓ EDGE CASES
+  Address potential ambiguities
+  Specify handling of special cases
+
+USER'S ORIGINAL PROMPT:
+═════════════════════
 ${userPrompt}
+═════════════════════
 
-IMPORTANT: Output ONLY the improved prompt. No preamble, no explanation, no "Here's the improved version". Just the prompt itself.`
+CRITICAL OUTPUT RULE:
+Respond with ONLY the optimized prompt. Zero preamble. Zero meta-commentary. Direct prompt text only.`
     },
     'gemini.google.com': {
       selectors: [
         'rich-textarea .ql-editor',
+        'div[contenteditable="true"][aria-label*="prompt"]',
+        'div[contenteditable="true"][aria-label*="message"]',
+        'div[contenteditable="true"][data-placeholder]',
         'div[contenteditable="true"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="Enter"]',
         'textarea'
       ],
       name: 'Gemini',
       type: 'gemini',
-      submitSelector: 'button[aria-label*="Send"]',
-      improvementPrompt: (userPrompt) => `You are an expert prompt engineer optimizing prompts for Google Gemini. Transform this user prompt into a highly effective version.
+      submitSelector: 'button[aria-label*="Send"], button[aria-label*="send"], button[type="submit"]',
+      improvementPrompt: (userPrompt) => `You are a Gemini prompt optimization specialist. Google Gemini excels at multimodal understanding, creative tasks, and detailed analysis. Engineer a prompt that maximizes Gemini's capabilities.
 
-Enhancement Guidelines:
-1. **Precision**: Make requirements explicit and unambiguous
-2. **Organization**: Structure multi-part requests clearly
-3. **Context**: Provide relevant background for better understanding
-4. **Format Specification**: Define desired output structure (lists, tables, code, etc.)
-5. **Constraints**: Add helpful boundaries (length, complexity, style)
-6. **Clarity**: Eliminate vagueness and potential misinterpretations
+GEMINI OPTIMIZATION FRAMEWORK:
+╔════════════════════════════════╗
 
-User's original prompt:
+🎯 CORE OPTIMIZATION STRATEGIES:
+
+1. PRECISION ENGINEERING
+   → Eliminate ALL ambiguity
+   → Define technical terms explicitly
+   → Specify exact requirements and deliverables
+
+2. STRUCTURAL CLARITY
+   → Organize multi-part requests with clear sections
+   → Use numbered steps for sequential tasks
+   → Employ bullet points for parallel requirements
+
+3. CONTEXTUAL RICHNESS
+   → Provide sufficient background information
+   → Include relevant constraints and assumptions
+   → Specify domain knowledge required
+
+4. FORMAT SPECIFICATION
+   → Define output structure (markdown/JSON/code/tables)
+   → Request specific organization patterns
+   → Specify level of detail needed
+
+5. QUALITY AMPLIFIERS
+   → Add descriptors: "thorough", "detailed", "comprehensive"
+   → Request examples and explanations
+   → Ask for multiple approaches when applicable
+
+6. CONSTRAINT DEFINITION
+   → Set boundaries: length, style, tone, complexity
+   → Define what to include AND exclude
+   → Specify target audience if relevant
+
+ORIGINAL USER PROMPT:
+────────────────────────────────
 ${userPrompt}
+────────────────────────────────
 
-Output ONLY the enhanced prompt. Do not include any introduction, explanation, or meta-text. Begin directly with the improved prompt.`
+╚════════════════════════════════╝
+
+OUTPUT DIRECTIVE: Return ONLY the optimized prompt. No preamble, no explanations, no wrapper text. Begin directly with enhanced prompt content.`
     },
     'perplexity.ai': {
       selectors: [
@@ -133,20 +251,61 @@ Output ONLY the enhanced prompt. Do not include any introduction, explanation, o
       name: 'Perplexity',
       type: 'perplexity',
       submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `You are a prompt engineering expert specializing in search and research queries for Perplexity AI. Optimize this prompt for comprehensive, well-sourced responses.
+      improvementPrompt: (userPrompt) => `You are a Perplexity AI search optimization expert. Perplexity excels at research, fact-finding, and synthesizing information from multiple sources with citations. Transform this query into a research powerhouse prompt.
 
-Optimization Strategy:
-1. **Search Intent**: Clarify what information is being sought
-2. **Scope Definition**: Define the breadth and depth of research needed
-3. **Source Preferences**: Specify types of sources if relevant (academic, recent news, technical docs)
-4. **Structure**: Organize multi-faceted questions clearly
-5. **Output Format**: Define how information should be presented
-6. **Time Relevance**: Specify if recency matters
+PERPLEXITY OPTIMIZATION MATRIX:
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-Original query:
+🔍 RESEARCH QUERY ENHANCEMENT:
+
+① SEARCH INTENT PRECISION
+   • Clarify EXACTLY what information is sought
+   • Define the specific question or problem
+   • Specify the end goal of the research
+
+② SCOPE & DEPTH DEFINITION
+   • Breadth: How wide should the search be?
+   • Depth: How detailed should answers be?
+   • Coverage: Which aspects to prioritize?
+
+③ SOURCE QUALITY SPECIFICATIONS
+   • Academic papers / peer-reviewed sources
+   • Recent news / current events (specify timeframe)
+   • Technical documentation / official sources
+   • Industry reports / expert analyses
+   • Specify credibility requirements
+
+④ TEMPORAL CONSTRAINTS
+   • "Recent" → Specify: last week/month/year
+   • Historical context needed?
+   • Evolution over time relevant?
+   • Latest developments critical?
+
+⑤ OUTPUT STRUCTURE REQUIREMENTS
+   • Summary format: bullet points / paragraphs / tables
+   • Citation style: inline / footnotes / bibliography
+   • Comparison structure if evaluating options
+   • Pros/cons analysis if applicable
+
+⑥ MULTI-PERSPECTIVE REQUESTS
+   • Multiple viewpoints needed?
+   • Contrasting opinions required?
+   • Expert consensus vs. debates?
+   • Different domain perspectives?
+
+⑦ SPECIFICITY BOOSTERS
+   • Geographic focus if relevant
+   • Industry/domain specificity
+   • Technical level (beginner/expert)
+   • Use case or application context
+
+USER'S ORIGINAL QUERY:
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ${userPrompt}
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-Respond with ONLY the optimized prompt. No explanations, no meta-commentary, just the improved prompt itself.`
+STRICT OUTPUT RULE:
+Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure enhanced prompt only.`
     },
     'www.perplexity.ai': {
       selectors: [
@@ -158,20 +317,61 @@ Respond with ONLY the optimized prompt. No explanations, no meta-commentary, jus
       name: 'Perplexity',
       type: 'perplexity',
       submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `You are a prompt engineering expert specializing in search and research queries for Perplexity AI. Optimize this prompt for comprehensive, well-sourced responses.
+      improvementPrompt: (userPrompt) => `You are a Perplexity AI search optimization expert. Perplexity excels at research, fact-finding, and synthesizing information from multiple sources with citations. Transform this query into a research powerhouse prompt.
 
-Optimization Strategy:
-1. **Search Intent**: Clarify what information is being sought
-2. **Scope Definition**: Define the breadth and depth of research needed
-3. **Source Preferences**: Specify types of sources if relevant (academic, recent news, technical docs)
-4. **Structure**: Organize multi-faceted questions clearly
-5. **Output Format**: Define how information should be presented
-6. **Time Relevance**: Specify if recency matters
+PERPLEXITY OPTIMIZATION MATRIX:
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-Original query:
+🔍 RESEARCH QUERY ENHANCEMENT:
+
+① SEARCH INTENT PRECISION
+   • Clarify EXACTLY what information is sought
+   • Define the specific question or problem
+   • Specify the end goal of the research
+
+② SCOPE & DEPTH DEFINITION
+   • Breadth: How wide should the search be?
+   • Depth: How detailed should answers be?
+   • Coverage: Which aspects to prioritize?
+
+③ SOURCE QUALITY SPECIFICATIONS
+   • Academic papers / peer-reviewed sources
+   • Recent news / current events (specify timeframe)
+   • Technical documentation / official sources
+   • Industry reports / expert analyses
+   • Specify credibility requirements
+
+④ TEMPORAL CONSTRAINTS
+   • "Recent" → Specify: last week/month/year
+   • Historical context needed?
+   • Evolution over time relevant?
+   • Latest developments critical?
+
+⑤ OUTPUT STRUCTURE REQUIREMENTS
+   • Summary format: bullet points / paragraphs / tables
+   • Citation style: inline / footnotes / bibliography
+   • Comparison structure if evaluating options
+   • Pros/cons analysis if applicable
+
+⑥ MULTI-PERSPECTIVE REQUESTS
+   • Multiple viewpoints needed?
+   • Contrasting opinions required?
+   • Expert consensus vs. debates?
+   • Different domain perspectives?
+
+⑦ SPECIFICITY BOOSTERS
+   • Geographic focus if relevant
+   • Industry/domain specificity
+   • Technical level (beginner/expert)
+   • Use case or application context
+
+USER'S ORIGINAL QUERY:
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ${userPrompt}
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-Respond with ONLY the optimized prompt. No explanations, no meta-commentary, just the improved prompt itself.`
+STRICT OUTPUT RULE:
+Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure enhanced prompt only.`
     }
   };
 
@@ -467,9 +667,12 @@ Respond with ONLY the optimized prompt. No explanations, no meta-commentary, jus
   function positionWidget(widget, inputElement) {
     const rect = inputElement.getBoundingClientRect();
 
-    // Position at the right edge, more above the input field
+    // Position 20% more to the right from the right edge
+    const rightOffset = window.innerWidth - rect.right;
+    const adjustedRight = rightOffset * 0.8; // 20% more to the right (reduce offset by 20%)
+
     widget.style.position = 'fixed';
-    widget.style.right = `${window.innerWidth - rect.right}px`; // Align with right edge
+    widget.style.right = `${adjustedRight}px`; // 20% more to the right
     widget.style.top = `${rect.top - 60}px`; // 60px above the input
     widget.style.zIndex = '999999';
 
