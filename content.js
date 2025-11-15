@@ -693,6 +693,17 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
   }
 
   /**
+   * Throttle function for performance
+   */
+  let lastPositionUpdate = 0;
+  function throttledPositionUpdate(widget, inputElement) {
+    const now = performance.now();
+    if (now - lastPositionUpdate < 80) return;
+    lastPositionUpdate = now;
+    positionWidget(widget, inputElement);
+  }
+
+  /**
    * Attach the PromptSculptor widget to an input field
    */
   async function attachWidget(inputElement, config) {
@@ -710,7 +721,19 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     if (!sculptorWidget) {
       const widget = createWidget();
       sculptorWidget = widget;
-      document.body.appendChild(widget);
+
+      // For ChatGPT, try to attach to toolbar; otherwise attach to body
+      const hostname = window.location.hostname;
+      if (hostname === 'chat.openai.com' || hostname === 'chatgpt.com') {
+        const result = findChatGPTToolbar();
+        if (result && result.toolbarEl) {
+          result.toolbarEl.appendChild(widget);
+        } else {
+          document.body.appendChild(widget);
+        }
+      } else {
+        document.body.appendChild(widget);
+      }
     }
 
     // Position the widget near the input
@@ -719,10 +742,10 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     // Add event listeners
     setupEventListeners(inputElement, config);
 
-    // Update position on scroll/resize
+    // Update position on scroll/resize with throttling
     const updatePosition = () => {
       if (sculptorWidget && inputElement && isVisible(inputElement)) {
-        positionWidget(sculptorWidget, inputElement);
+        throttledPositionUpdate(sculptorWidget, inputElement);
       }
     };
 
@@ -809,11 +832,65 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
   }
 
   /**
+   * Find ChatGPT toolbar and voice button for positioning
+   */
+  function findChatGPTToolbar() {
+    // Try to find the voice/audio button
+    const voiceButton =
+      document.querySelector('button[aria-label*="Voice"]') ||
+      document.querySelector('button[aria-label*="voice"]') ||
+      document.querySelector('button[aria-label*="Audio"]') ||
+      document.querySelector('button[aria-label*="audio"]');
+
+    if (!voiceButton) return null;
+
+    // Find the toolbar container
+    const toolbarEl = voiceButton.closest('div');
+
+    return { voiceButton, toolbarEl };
+  }
+
+  /**
+   * Position widget above ChatGPT voice button
+   */
+  function positionWidgetAboveVoice(widget) {
+    const result = findChatGPTToolbar();
+    if (!result) return false;
+
+    const { voiceButton, toolbarEl } = result;
+    const vbRect = voiceButton.getBoundingClientRect();
+    const widgetRect = widget.getBoundingClientRect();
+
+    const verticalGap = 8; // Space between voice button and pill
+    const rightGap = 0;    // Align right edges
+
+    // Make toolbar relative if needed
+    if (toolbarEl && getComputedStyle(toolbarEl).position === 'static') {
+      toolbarEl.style.position = 'relative';
+    }
+
+    widget.style.position = 'absolute';
+    widget.style.top = `${vbRect.top + window.scrollY - widgetRect.height - verticalGap}px`;
+    widget.style.left = `${vbRect.right + window.scrollX - widgetRect.width + rightGap}px`;
+    widget.style.zIndex = '999999';
+
+    return true;
+  }
+
+  /**
    * Position the widget near the input field
    */
   function positionWidget(widget, inputElement) {
     if (!widget || !inputElement) return;
 
+    // Try ChatGPT-specific positioning first
+    const hostname = window.location.hostname;
+    if (hostname === 'chat.openai.com' || hostname === 'chatgpt.com') {
+      const positioned = positionWidgetAboveVoice(widget);
+      if (positioned) return;
+    }
+
+    // Fallback to generic positioning for other LLMs
     const rect = inputElement.getBoundingClientRect();
     const widgetRect = widget.getBoundingClientRect();
 
@@ -1396,6 +1473,72 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
   // Copying from original implementation
 
   /**
+   * Show prompt detail view
+   */
+  function showPromptDetail(prompt, inputElement) {
+    // Create detail modal
+    const modal = document.createElement('div');
+    modal.className = 'ps-lib-detail-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'ps-lib-detail-title');
+    modal.innerHTML = `
+      <div class="ps-lib-detail-content">
+        <header class="ps-lib-detail-header">
+          <h2 class="ps-lib-detail-title" id="ps-lib-detail-title">${escapeHtml(prompt.title)}</h2>
+          <button class="ps-lib-detail-close-icon" type="button" aria-label="Close saved prompt">✕</button>
+        </header>
+        <div class="ps-lib-detail-body">
+          <div class="ps-detail-section">
+            <h3>Original Prompt</h3>
+            <textarea readonly>${escapeHtml(prompt.original)}</textarea>
+          </div>
+          <div class="ps-detail-section">
+            <h3>Improved Prompt</h3>
+            <textarea readonly>${escapeHtml(prompt.improved)}</textarea>
+          </div>
+        </div>
+        <footer class="ps-lib-detail-footer">
+          <button class="ps-btn-ghost" type="button" id="ps-detail-close-btn">Close</button>
+          <button class="ps-btn-primary" type="button" id="ps-detail-copy-btn">Copy Improved Prompt</button>
+        </footer>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Close handlers
+    const closeDetail = () => {
+      modal.remove();
+    };
+
+    modal.querySelector('.ps-lib-detail-close-icon').addEventListener('click', closeDetail);
+    modal.querySelector('#ps-detail-close-btn').addEventListener('click', closeDetail);
+
+    // Copy button
+    modal.querySelector('#ps-detail-copy-btn').addEventListener('click', () => {
+      copyToClipboard(prompt.improved);
+      showNotification('Copied to clipboard!', 'success');
+    });
+
+    // ESC to close
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        closeDetail();
+        document.removeEventListener('keydown', handleEsc);
+      }
+    };
+    document.addEventListener('keydown', handleEsc);
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeDetail();
+      }
+    });
+  }
+
+  /**
    * Handle library button click
    */
   async function handleLibraryClick(inputElement) {
@@ -1478,7 +1621,7 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
             </svg>
           </button>
         </div>
-        <div class="ps-library-item-preview">${escapeHtml(prompt.improved.substring(0, 100))}...</div>
+        <div class="ps-library-item-preview ps-clickable" data-id="${prompt.id}">${escapeHtml(prompt.improved.substring(0, 100))}...</div>
         <div class="ps-library-item-actions">
           <button class="ps-btn-small ps-use-btn" data-id="${prompt.id}">Use</button>
           <button class="ps-btn-small ps-copy-btn" data-id="${prompt.id}">Copy</button>
@@ -1486,6 +1629,17 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
         </div>
       </div>
     `).join('');
+
+    // Add click handler for viewing prompt details
+    content.querySelectorAll('.ps-library-item-preview.ps-clickable').forEach(preview => {
+      preview.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        const prompt = await storage.getPrompt(id);
+        if (prompt) {
+          showPromptDetail(prompt, inputElement);
+        }
+      });
+    });
 
     // Add event listeners
     content.querySelectorAll('.ps-use-btn').forEach(btn => {
