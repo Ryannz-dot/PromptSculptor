@@ -377,17 +377,62 @@ body {
   margin-bottom: 8px;
 }
 
-.setting-item label {
+/* Chrome-style Toggle */
+.ps-toggle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  user-select: none;
 }
 
-.setting-item input[type="checkbox"] {
+.ps-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ps-toggle-slider {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  background: #dadce0;
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.ps-toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.ps-toggle-input:checked + .ps-toggle-slider {
+  background: #1a73e8;
+}
+
+.ps-toggle-input:checked + .ps-toggle-slider::before {
+  transform: translateX(14px);
+}
+
+.ps-toggle-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+  line-height: 1.4;
+}
+
+/* Legacy checkbox fallback (if needed) */
+.setting-item input[type="checkbox"]:not(.ps-toggle-input) {
   width: 18px;
   height: 18px;
   cursor: pointer;

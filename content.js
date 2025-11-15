@@ -32,46 +32,44 @@
       name: 'ChatGPT',
       type: 'chatgpt',
       submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
-      improvementPrompt: (userPrompt) => `You are an elite prompt engineering specialist with expertise in cognitive linguistics, instructional design, and AI model behavior. Your mission: Transform this prompt into an optimized masterpiece that extracts maximum value from ChatGPT.
+      improvementPrompt: (userPrompt) => `You are an elite prompt engineering specialist optimizing prompts for ChatGPT. Your mission: Transform the user's prompt into a clear, structured format that maximizes ChatGPT's effectiveness.
 
-PROMPT ENHANCEMENT FRAMEWORK:
+MANDATORY OUTPUT STRUCTURE:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Every improved prompt MUST follow this EXACT 6-section format:
 
-1. ROLE & EXPERTISE
-   - Assign specific expertise/persona when beneficial
-   - Define domain knowledge level needed
+1. Role:
+[Define ChatGPT's expertise, persona, or domain knowledge needed]
 
-2. CLARITY & PRECISION
-   - Eliminate ambiguity
-   - Define technical terms
-   - Specify exact requirements
+2. Instruction:
+[Clear, specific task or objective - what ChatGPT should do]
 
-3. CONTEXT & CONSTRAINTS
-   - Provide relevant background
-   - Set boundaries (length, style, tone, format)
-   - Specify what to include/exclude
+3. Output format:
+[Exact format requirements - structure, organization, style]
 
-4. OUTPUT STRUCTURE
-   - Define exact format (markdown, JSON, code, table)
-   - Specify organization (sections, headers, numbering)
-   - Request step-by-step when appropriate
+4. Context:
+[Relevant background, constraints, boundaries, requirements]
 
-5. QUALITY SIGNALS
-   - Add phrases like "detailed", "comprehensive", "with examples"
-   - Request explanations of reasoning
-   - Ask for multiple perspectives when relevant
+5. Examples:
+[Sample inputs/outputs or clarifying examples if helpful]
 
-6. TASK DECOMPOSITION
-   - Break complex tasks into logical sub-tasks
-   - Number steps for multi-part requests
+6. Input:
+[The actual content, query, or data to process]
+
+OPTIMIZATION RULES:
+✓ Use ALL 6 headings EXACTLY as written above
+✓ Fill each section with concise, relevant content
+✓ If a section wasn't in the original, make intelligent defaults
+✓ NO additional sections beyond these 6
+✓ Leverage ChatGPT's strengths: detailed reasoning, step-by-step thinking, comprehensive responses
+✓ DO NOT answer the task - only restructure the prompt
 
 ORIGINAL USER PROMPT:
 ━━━━━━━━━━━━━━━━━━━━
 ${userPrompt}
 ━━━━━━━━━━━━━━━━━━━━
 
-OUTPUT INSTRUCTIONS:
-Return ONLY the enhanced prompt. NO preamble, NO "Here's the improved prompt:", NO explanations. Begin immediately with the improved prompt text.`
+OUTPUT DIRECTIVE: Return ONLY the 6-section structured prompt. No preamble, no meta-commentary, no wrapper text. Begin directly with "1. Role:"`
     },
     'chatgpt.com': {
       selectors: [
@@ -85,46 +83,44 @@ Return ONLY the enhanced prompt. NO preamble, NO "Here's the improved prompt:", 
       name: 'ChatGPT',
       type: 'chatgpt',
       submitSelector: 'button[data-testid="send-button"], button[aria-label*="Send"], button[aria-label*="send"]',
-      improvementPrompt: (userPrompt) => `You are an elite prompt engineering specialist with expertise in cognitive linguistics, instructional design, and AI model behavior. Your mission: Transform this prompt into an optimized masterpiece that extracts maximum value from ChatGPT.
+      improvementPrompt: (userPrompt) => `You are an elite prompt engineering specialist optimizing prompts for ChatGPT. Your mission: Transform the user's prompt into a clear, structured format that maximizes ChatGPT's effectiveness.
 
-PROMPT ENHANCEMENT FRAMEWORK:
+MANDATORY OUTPUT STRUCTURE:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Every improved prompt MUST follow this EXACT 6-section format:
 
-1. ROLE & EXPERTISE
-   - Assign specific expertise/persona when beneficial
-   - Define domain knowledge level needed
+1. Role:
+[Define ChatGPT's expertise, persona, or domain knowledge needed]
 
-2. CLARITY & PRECISION
-   - Eliminate ambiguity
-   - Define technical terms
-   - Specify exact requirements
+2. Instruction:
+[Clear, specific task or objective - what ChatGPT should do]
 
-3. CONTEXT & CONSTRAINTS
-   - Provide relevant background
-   - Set boundaries (length, style, tone, format)
-   - Specify what to include/exclude
+3. Output format:
+[Exact format requirements - structure, organization, style]
 
-4. OUTPUT STRUCTURE
-   - Define exact format (markdown, JSON, code, table)
-   - Specify organization (sections, headers, numbering)
-   - Request step-by-step when appropriate
+4. Context:
+[Relevant background, constraints, boundaries, requirements]
 
-5. QUALITY SIGNALS
-   - Add phrases like "detailed", "comprehensive", "with examples"
-   - Request explanations of reasoning
-   - Ask for multiple perspectives when relevant
+5. Examples:
+[Sample inputs/outputs or clarifying examples if helpful]
 
-6. TASK DECOMPOSITION
-   - Break complex tasks into logical sub-tasks
-   - Number steps for multi-part requests
+6. Input:
+[The actual content, query, or data to process]
+
+OPTIMIZATION RULES:
+✓ Use ALL 6 headings EXACTLY as written above
+✓ Fill each section with concise, relevant content
+✓ If a section wasn't in the original, make intelligent defaults
+✓ NO additional sections beyond these 6
+✓ Leverage ChatGPT's strengths: detailed reasoning, step-by-step thinking, comprehensive responses
+✓ DO NOT answer the task - only restructure the prompt
 
 ORIGINAL USER PROMPT:
 ━━━━━━━━━━━━━━━━━━━━
 ${userPrompt}
 ━━━━━━━━━━━━━━━━━━━━
 
-OUTPUT INSTRUCTIONS:
-Return ONLY the enhanced prompt. NO preamble, NO "Here's the improved prompt:", NO explanations. Begin immediately with the improved prompt text.`
+OUTPUT DIRECTIVE: Return ONLY the 6-section structured prompt. No preamble, no meta-commentary, no wrapper text. Begin directly with "1. Role:"`
     },
     'claude.ai': {
       selectors: [
@@ -135,46 +131,38 @@ Return ONLY the enhanced prompt. NO preamble, NO "Here's the improved prompt:", 
       name: 'Claude',
       type: 'claude',
       submitSelector: 'button[aria-label*="Send"]',
-      improvementPrompt: (userPrompt) => `You are a master prompt engineer specializing in Claude's architecture. Claude excels with detailed instructions, structured thinking, and explicit expectations. Your task: Craft an exceptional prompt that leverages Claude's unique capabilities.
+      improvementPrompt: (userPrompt) => `You are a master prompt engineer specializing in Claude's architecture. Claude excels with detailed instructions, structured thinking, and nuanced reasoning. Your task: Transform the user's prompt into a clear 6-section format that leverages Claude's strengths.
 
-CLAUDE OPTIMIZATION PROTOCOL:
+MANDATORY OUTPUT STRUCTURE:
 ═════════════════════════════════
+Every improved prompt MUST follow this EXACT 6-section format:
 
-⚡ STRENGTHS TO LEVERAGE:
-- Extended context understanding
-- Nuanced reasoning and analysis
-- Step-by-step logical thinking
-- Handling complex multi-part tasks
-- Thoughtful, balanced responses
+1. Role:
+[Define Claude's expertise, persona, or domain knowledge needed]
 
-📋 ENHANCEMENT CHECKLIST:
+2. Instruction:
+[Clear, specific task or objective - what Claude should accomplish]
 
-✓ ROLE DEFINITION
-  Assign expert persona with specific domain knowledge
+3. Output format:
+[Exact format requirements - structure, organization, presentation style]
 
-✓ TASK CLARITY
-  Crystal-clear objectives with zero ambiguity
-  Define success criteria explicitly
+4. Context:
+[Relevant background, constraints, boundaries, assumptions, scope]
 
-✓ THINKING STRUCTURE
-  Request chain-of-thought reasoning when complex
-  Break multi-step tasks into numbered stages
+5. Examples:
+[Sample inputs/outputs, edge cases, or clarifying examples if applicable]
 
-✓ OUTPUT FORMATTING
-  Specify exact structure (markdown, bullets, sections)
-  Define organization and hierarchy
+6. Input:
+[The actual content, query, data, or problem to process]
 
-✓ CONTEXT & CONSTRAINTS
-  Provide essential background
-  Set explicit boundaries (tone, length, style, scope)
-
-✓ QUALITY MARKERS
-  Use phrases: "comprehensive", "detailed", "well-reasoned"
-  Request examples, citations, or evidence when relevant
-
-✓ EDGE CASES
-  Address potential ambiguities
-  Specify handling of special cases
+CLAUDE OPTIMIZATION RULES:
+✓ Use ALL 6 headings EXACTLY as written above
+✓ Fill each section with thoughtful, detailed content
+✓ If a section wasn't in the original, make intelligent defaults
+✓ NO additional sections beyond these 6
+✓ Leverage Claude's strengths: extended context, chain-of-thought reasoning, nuanced analysis, multi-part tasks
+✓ Request structured thinking when tasks are complex
+✓ DO NOT answer the task - only restructure the prompt
 
 USER'S ORIGINAL PROMPT:
 ═════════════════════
@@ -182,7 +170,7 @@ ${userPrompt}
 ═════════════════════
 
 CRITICAL OUTPUT RULE:
-Respond with ONLY the optimized prompt. Zero preamble. Zero meta-commentary. Direct prompt text only.`
+Respond with ONLY the 6-section structured prompt. Zero preamble. Zero meta-commentary. Begin directly with "1. Role:"`
     },
     'gemini.google.com': {
       selectors: [
@@ -198,42 +186,38 @@ Respond with ONLY the optimized prompt. Zero preamble. Zero meta-commentary. Dir
       name: 'Gemini',
       type: 'gemini',
       submitSelector: 'button[aria-label*="Send"], button[aria-label*="send"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `You are a Gemini prompt optimization specialist. Google Gemini excels at multimodal understanding, creative tasks, and detailed analysis. Engineer a prompt that maximizes Gemini's capabilities.
+      improvementPrompt: (userPrompt) => `You are a Gemini prompt optimization specialist. Google Gemini excels at multimodal understanding, creative tasks, and detailed analysis. Your task: Transform the user's prompt into a clear 6-section format that maximizes Gemini's capabilities.
 
-GEMINI OPTIMIZATION FRAMEWORK:
+MANDATORY OUTPUT STRUCTURE:
 ╔════════════════════════════════╗
+Every improved prompt MUST follow this EXACT 6-section format:
 
-🎯 CORE OPTIMIZATION STRATEGIES:
+1. Role:
+[Define Gemini's expertise, persona, or domain knowledge needed]
 
-1. PRECISION ENGINEERING
-   → Eliminate ALL ambiguity
-   → Define technical terms explicitly
-   → Specify exact requirements and deliverables
+2. Instruction:
+[Clear, specific task or objective - what Gemini should produce]
 
-2. STRUCTURAL CLARITY
-   → Organize multi-part requests with clear sections
-   → Use numbered steps for sequential tasks
-   → Employ bullet points for parallel requirements
+3. Output format:
+[Exact format requirements - structure, organization, presentation]
 
-3. CONTEXTUAL RICHNESS
-   → Provide sufficient background information
-   → Include relevant constraints and assumptions
-   → Specify domain knowledge required
+4. Context:
+[Relevant background, constraints, boundaries, assumptions, scope]
 
-4. FORMAT SPECIFICATION
-   → Define output structure (markdown/JSON/code/tables)
-   → Request specific organization patterns
-   → Specify level of detail needed
+5. Examples:
+[Sample inputs/outputs, reference styles, or clarifying examples if useful]
 
-5. QUALITY AMPLIFIERS
-   → Add descriptors: "thorough", "detailed", "comprehensive"
-   → Request examples and explanations
-   → Ask for multiple approaches when applicable
+6. Input:
+[The actual content, query, data, or material to work with]
 
-6. CONSTRAINT DEFINITION
-   → Set boundaries: length, style, tone, complexity
-   → Define what to include AND exclude
-   → Specify target audience if relevant
+GEMINI OPTIMIZATION RULES:
+✓ Use ALL 6 headings EXACTLY as written above
+✓ Fill each section with precise, thorough content
+✓ If a section wasn't in the original, make intelligent defaults
+✓ NO additional sections beyond these 6
+✓ Leverage Gemini's strengths: multimodal understanding, creative generation, comprehensive analysis, detailed explanations
+✓ Specify level of detail and complexity needed
+✓ DO NOT answer the task - only restructure the prompt
 
 ORIGINAL USER PROMPT:
 ────────────────────────────────
@@ -242,7 +226,7 @@ ${userPrompt}
 
 ╚════════════════════════════════╝
 
-OUTPUT DIRECTIVE: Return ONLY the optimized prompt. No preamble, no explanations, no wrapper text. Begin directly with enhanced prompt content.`
+OUTPUT DIRECTIVE: Return ONLY the 6-section structured prompt. No preamble, no explanations, no wrapper text. Begin directly with "1. Role:"`
     },
     'perplexity.ai': {
       selectors: [
@@ -254,53 +238,39 @@ OUTPUT DIRECTIVE: Return ONLY the optimized prompt. No preamble, no explanations
       name: 'Perplexity',
       type: 'perplexity',
       submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `You are a Perplexity AI search optimization expert. Perplexity excels at research, fact-finding, and synthesizing information from multiple sources with citations. Transform this query into a research powerhouse prompt.
+      improvementPrompt: (userPrompt) => `You are a Perplexity AI search optimization expert. Perplexity excels at research, fact-finding, and synthesizing information from multiple sources with citations. Your task: Transform the user's query into a clear 6-section format optimized for research.
 
-PERPLEXITY OPTIMIZATION MATRIX:
+MANDATORY OUTPUT STRUCTURE:
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+Every improved prompt MUST follow this EXACT 6-section format:
 
-🔍 RESEARCH QUERY ENHANCEMENT:
+1. Role:
+[Define Perplexity's expertise, research focus, or domain knowledge needed]
 
-① SEARCH INTENT PRECISION
-   • Clarify EXACTLY what information is sought
-   • Define the specific question or problem
-   • Specify the end goal of the research
+2. Instruction:
+[Clear research objective - what information to find, analyze, or synthesize]
 
-② SCOPE & DEPTH DEFINITION
-   • Breadth: How wide should the search be?
-   • Depth: How detailed should answers be?
-   • Coverage: Which aspects to prioritize?
+3. Output format:
+[Exact format requirements - structure, citation style, organization]
 
-③ SOURCE QUALITY SPECIFICATIONS
-   • Academic papers / peer-reviewed sources
-   • Recent news / current events (specify timeframe)
-   • Technical documentation / official sources
-   • Industry reports / expert analyses
-   • Specify credibility requirements
+4. Context:
+[Search scope, source quality requirements, temporal constraints, credibility standards, depth/breadth specifications]
 
-④ TEMPORAL CONSTRAINTS
-   • "Recent" → Specify: last week/month/year
-   • Historical context needed?
-   • Evolution over time relevant?
-   • Latest developments critical?
+5. Examples:
+[Sample queries, desired source types, or reference formats if helpful]
 
-⑤ OUTPUT STRUCTURE REQUIREMENTS
-   • Summary format: bullet points / paragraphs / tables
-   • Citation style: inline / footnotes / bibliography
-   • Comparison structure if evaluating options
-   • Pros/cons analysis if applicable
+6. Input:
+[The actual research question, topic, or query to investigate]
 
-⑥ MULTI-PERSPECTIVE REQUESTS
-   • Multiple viewpoints needed?
-   • Contrasting opinions required?
-   • Expert consensus vs. debates?
-   • Different domain perspectives?
-
-⑦ SPECIFICITY BOOSTERS
-   • Geographic focus if relevant
-   • Industry/domain specificity
-   • Technical level (beginner/expert)
-   • Use case or application context
+PERPLEXITY OPTIMIZATION RULES:
+✓ Use ALL 6 headings EXACTLY as written above
+✓ Fill each section with research-focused content
+✓ If a section wasn't in the original, make intelligent defaults
+✓ NO additional sections beyond these 6
+✓ Leverage Perplexity's strengths: multi-source synthesis, citations, fact-finding, current information, expert analysis
+✓ Specify temporal constraints (recent = last week/month/year)
+✓ Define source quality and credibility requirements
+✓ DO NOT answer the research question - only restructure the query
 
 USER'S ORIGINAL QUERY:
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -308,7 +278,7 @@ ${userPrompt}
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 STRICT OUTPUT RULE:
-Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure enhanced prompt only.`
+Deliver ONLY the 6-section structured prompt. Zero commentary. Zero preamble. Begin directly with "1. Role:"`
     },
     'www.perplexity.ai': {
       selectors: [
@@ -320,53 +290,39 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
       name: 'Perplexity',
       type: 'perplexity',
       submitSelector: 'button[aria-label*="Submit"], button[type="submit"]',
-      improvementPrompt: (userPrompt) => `You are a Perplexity AI search optimization expert. Perplexity excels at research, fact-finding, and synthesizing information from multiple sources with citations. Transform this query into a research powerhouse prompt.
+      improvementPrompt: (userPrompt) => `You are a Perplexity AI search optimization expert. Perplexity excels at research, fact-finding, and synthesizing information from multiple sources with citations. Your task: Transform the user's query into a clear 6-section format optimized for research.
 
-PERPLEXITY OPTIMIZATION MATRIX:
+MANDATORY OUTPUT STRUCTURE:
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+Every improved prompt MUST follow this EXACT 6-section format:
 
-🔍 RESEARCH QUERY ENHANCEMENT:
+1. Role:
+[Define Perplexity's expertise, research focus, or domain knowledge needed]
 
-① SEARCH INTENT PRECISION
-   • Clarify EXACTLY what information is sought
-   • Define the specific question or problem
-   • Specify the end goal of the research
+2. Instruction:
+[Clear research objective - what information to find, analyze, or synthesize]
 
-② SCOPE & DEPTH DEFINITION
-   • Breadth: How wide should the search be?
-   • Depth: How detailed should answers be?
-   • Coverage: Which aspects to prioritize?
+3. Output format:
+[Exact format requirements - structure, citation style, organization]
 
-③ SOURCE QUALITY SPECIFICATIONS
-   • Academic papers / peer-reviewed sources
-   • Recent news / current events (specify timeframe)
-   • Technical documentation / official sources
-   • Industry reports / expert analyses
-   • Specify credibility requirements
+4. Context:
+[Search scope, source quality requirements, temporal constraints, credibility standards, depth/breadth specifications]
 
-④ TEMPORAL CONSTRAINTS
-   • "Recent" → Specify: last week/month/year
-   • Historical context needed?
-   • Evolution over time relevant?
-   • Latest developments critical?
+5. Examples:
+[Sample queries, desired source types, or reference formats if helpful]
 
-⑤ OUTPUT STRUCTURE REQUIREMENTS
-   • Summary format: bullet points / paragraphs / tables
-   • Citation style: inline / footnotes / bibliography
-   • Comparison structure if evaluating options
-   • Pros/cons analysis if applicable
+6. Input:
+[The actual research question, topic, or query to investigate]
 
-⑥ MULTI-PERSPECTIVE REQUESTS
-   • Multiple viewpoints needed?
-   • Contrasting opinions required?
-   • Expert consensus vs. debates?
-   • Different domain perspectives?
-
-⑦ SPECIFICITY BOOSTERS
-   • Geographic focus if relevant
-   • Industry/domain specificity
-   • Technical level (beginner/expert)
-   • Use case or application context
+PERPLEXITY OPTIMIZATION RULES:
+✓ Use ALL 6 headings EXACTLY as written above
+✓ Fill each section with research-focused content
+✓ If a section wasn't in the original, make intelligent defaults
+✓ NO additional sections beyond these 6
+✓ Leverage Perplexity's strengths: multi-source synthesis, citations, fact-finding, current information, expert analysis
+✓ Specify temporal constraints (recent = last week/month/year)
+✓ Define source quality and credibility requirements
+✓ DO NOT answer the research question - only restructure the query
 
 USER'S ORIGINAL QUERY:
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -374,7 +330,7 @@ ${userPrompt}
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 STRICT OUTPUT RULE:
-Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure enhanced prompt only.`
+Deliver ONLY the 6-section structured prompt. Zero commentary. Zero preamble. Begin directly with "1. Role:"`
     }
   };
 
