@@ -15,6 +15,9 @@
   const storage = new StorageManager();
   let isImproving = false;
 
+  // Platform detection for keyboard shortcuts
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
   // Configuration for different LLM sites
   const SITE_CONFIGS = {
     'chat.openai.com': {
@@ -398,12 +401,153 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     // Inject styles
     injectStyles();
 
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts();
+
     // Wait for page to load
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', setupObserver);
     } else {
       setupObserver();
     }
+  }
+
+  /**
+   * Setup keyboard shortcuts
+   * Cmd/Ctrl+Shift+P - Trigger improvement
+   * Cmd/Ctrl+Shift+L - Open library
+   * Cmd/Ctrl+Shift+H - Open history
+   * ESC - Close modals/dropdowns
+   */
+  function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      // Check if user is typing in a regular input/textarea that's NOT an LLM input
+      // Allow shortcuts to work on LLM inputs, but not on other inputs
+      const activeElement = document.activeElement;
+      const isTypingInOtherInput = (
+        (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA') &&
+        activeElement !== currentInputField &&
+        !activeElement.dataset.promptSculptorAttached
+      );
+
+      // Don't interfere if user is typing in other input fields
+      if (isTypingInOtherInput) {
+        return;
+      }
+
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      // ESC - Close modals and dropdowns
+      if (e.key === 'Escape') {
+        handleEscapeKey();
+        return;
+      }
+
+      // Cmd/Ctrl+Shift+P - Trigger prompt improvement
+      if (modKey && e.shiftKey && e.key === 'P') {
+        e.preventDefault();
+        handleShortcutImprove();
+        return;
+      }
+
+      // Cmd/Ctrl+Shift+L - Open library
+      if (modKey && e.shiftKey && e.key === 'L') {
+        e.preventDefault();
+        handleShortcutLibrary();
+        return;
+      }
+
+      // Cmd/Ctrl+Shift+H - Open history
+      if (modKey && e.shiftKey && e.key === 'H') {
+        e.preventDefault();
+        handleShortcutHistory();
+        return;
+      }
+    });
+
+    console.log('PromptSculptor: Keyboard shortcuts enabled', isMac ? '(Mac)' : '(Windows/Linux)');
+  }
+
+  /**
+   * Handle ESC key - Close modals and dropdowns
+   */
+  function handleEscapeKey() {
+    let somethingClosed = false;
+
+    // Close modal if open
+    if (improverModal && improverModal.style.display === 'flex') {
+      improverModal.style.display = 'none';
+      somethingClosed = true;
+      // Restore focus to widget or input
+      if (currentInputField) {
+        currentInputField.focus();
+      }
+    }
+
+    // Close dropdown menu if open
+    const dropdownMenuElement = document.getElementById('ps-dropdown-menu');
+    const dropdownToggle = document.getElementById('ps-dropdown-toggle');
+    if (dropdownMenuElement && dropdownMenuElement.classList.contains('ps-show')) {
+      dropdownMenuElement.classList.remove('ps-show');
+      if (dropdownToggle) {
+        dropdownToggle.setAttribute('aria-expanded', 'false');
+      }
+      somethingClosed = true;
+    }
+
+    // Close library/history dropdown if open
+    if (dropdownMenu) {
+      dropdownMenu.remove();
+      dropdownMenu = null;
+      somethingClosed = true;
+    }
+
+    if (somethingClosed) {
+      console.log('PromptSculptor: Closed via ESC key');
+    }
+  }
+
+  /**
+   * Handle Cmd/Ctrl+Shift+P - Trigger improvement
+   */
+  function handleShortcutImprove() {
+    if (!currentInputField) {
+      showNotification('No LLM input field detected', 'warning');
+      console.log('PromptSculptor: Shortcut triggered but no input field available');
+      return;
+    }
+
+    const hostname = window.location.hostname;
+    const config = SITE_CONFIGS[hostname];
+
+    if (!config) {
+      showNotification('Unsupported site for improvement', 'error');
+      return;
+    }
+
+    console.log('PromptSculptor: Improvement triggered via keyboard shortcut');
+    handleImproveClick(currentInputField, config);
+  }
+
+  /**
+   * Handle Cmd/Ctrl+Shift+L - Open library
+   */
+  function handleShortcutLibrary() {
+    if (!currentInputField) {
+      showNotification('No LLM input field detected', 'warning');
+      return;
+    }
+
+    console.log('PromptSculptor: Library opened via keyboard shortcut');
+    handleLibraryClick(currentInputField);
+  }
+
+  /**
+   * Handle Cmd/Ctrl+Shift+H - Open history
+   */
+  function handleShortcutHistory() {
+    console.log('PromptSculptor: History opened via keyboard shortcut');
+    handleHistoryClick();
   }
 
   /**
@@ -619,37 +763,39 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     const widget = document.createElement('div');
     widget.id = 'promptsculptor-widget';
     widget.className = 'ps-widget';
+    widget.setAttribute('role', 'toolbar');
+    widget.setAttribute('aria-label', 'PromptSculptor toolbar');
     widget.innerHTML = `
       <div class="ps-widget-container">
-        <button class="ps-widget-label" id="ps-label-btn" title="Click to improve prompt">PromptSculptor</button>
-        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="ps-widget-label" id="ps-label-btn" title="Click to improve prompt" aria-label="Improve prompt with PromptSculptor">PromptSculptor</button>
+        <button class="ps-main-button" id="ps-improve-btn" title="Improve Prompt with AI" aria-label="Improve prompt with AI">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
           </svg>
         </button>
-        <button class="ps-dropdown-toggle" id="ps-dropdown-toggle" title="Library & History">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="ps-dropdown-toggle" id="ps-dropdown-toggle" title="Library & History" aria-label="Open library and history menu" aria-haspopup="menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M6 9l6 6 6-6"/>
           </svg>
         </button>
       </div>
-      <div class="ps-dropdown-menu" id="ps-dropdown-menu">
-        <button class="ps-dropdown-item" id="ps-menu-library">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="ps-dropdown-menu" id="ps-dropdown-menu" role="menu" aria-label="PromptSculptor menu">
+        <button class="ps-dropdown-item" id="ps-menu-library" role="menuitem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
           </svg>
           <span>Prompt Library</span>
         </button>
-        <button class="ps-dropdown-item" id="ps-menu-history">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="ps-dropdown-item" id="ps-menu-history" role="menuitem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <circle cx="12" cy="12" r="10"/>
             <path d="M12 6v6l4 2"/>
           </svg>
           <span>History</span>
         </button>
         <div class="ps-dropdown-divider"></div>
-        <button class="ps-dropdown-item" id="ps-menu-hide">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="ps-dropdown-item" id="ps-menu-hide" role="menuitem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
             <line x1="1" y1="1" x2="23" y2="23"/>
           </svg>
@@ -727,6 +873,7 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
         e.preventDefault();
         e.stopPropagation();
         const menu = document.getElementById('ps-dropdown-menu');
+        const isExpanded = menu.classList.contains('ps-show');
 
         // Check if dropdown should open upward
         if (sculptorWidget) {
@@ -744,6 +891,9 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
         }
 
         menu.classList.toggle('ps-show');
+
+        // Update aria-expanded attribute
+        newToggle.setAttribute('aria-expanded', !isExpanded);
       });
     }
 
@@ -790,8 +940,12 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     document.addEventListener('click', (e) => {
       const menu = document.getElementById('ps-dropdown-menu');
       const widget = document.getElementById('promptsculptor-widget');
+      const toggle = document.getElementById('ps-dropdown-toggle');
       if (menu && widget && !widget.contains(e.target)) {
         menu.classList.remove('ps-show');
+        if (toggle) {
+          toggle.setAttribute('aria-expanded', 'false');
+        }
       }
     });
   }
@@ -799,7 +953,7 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
   /**
    * Handle improve button click - Uses LLM's own session
    */
-  async function handleImproveClick(inputElement, config) {
+  async function handleImproveClick(inputElement, config, isRetry = false) {
     if (isImproving) {
       showNotification('Already improving a prompt...', 'info');
       return;
@@ -821,7 +975,7 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     showLoadingIndicator();
 
     try {
-      console.log('PromptSculptor: Improving prompt using', config.name);
+      console.log('PromptSculptor: Improving prompt using', config.name, isRetry ? '(retry)' : '');
 
       // Use the LLM's own session to improve the prompt
       const improvedPrompt = await improvePromptWithLLM(currentText, config, inputElement);
@@ -838,15 +992,45 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
           platform: config.name
         });
       } else {
-        showNotification('Could not improve prompt. Try again or check console for errors.', 'error');
+        throw new Error('No improved prompt returned');
       }
     } catch (error) {
       console.error('PromptSculptor: Error improving prompt:', error);
-      showNotification('Error: ' + error.message, 'error');
+
+      // Retry once if this is the first attempt
+      if (!isRetry) {
+        console.log('PromptSculptor: Retrying improvement...');
+        isImproving = false;
+        hideLoadingIndicator();
+
+        // Wait a moment before retrying
+        setTimeout(() => {
+          handleImproveClick(inputElement, config, true);
+        }, 1000);
+        return;
+      }
+
+      // After retry failed or if this was already a retry
+      showNotification('Couldn\'t improve prompt this time—please try again.', 'error');
+
+      // Ensure original prompt is restored
+      setInputText(inputElement, currentText);
     } finally {
       isImproving = false;
       hideLoadingIndicator();
     }
+  }
+
+  /**
+   * Timeout wrapper for promises
+   */
+  function withTimeout(promise, timeoutMs = 30000) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), timeoutMs)
+      )
+    ]);
   }
 
   /**
@@ -862,14 +1046,21 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     const originalPrompt = getInputText(inputElement);
 
     try {
-      // Method 1: Try to use the site's API directly
+      // Method 1: Try to use the site's API directly with timeout
+      let improvementPromise;
+
       if (config.type === 'chatgpt') {
-        return await improvewithChatGPT(metaPrompt, inputElement, config);
+        improvementPromise = improvewithChatGPT(metaPrompt, inputElement, config);
       } else if (config.type === 'claude') {
-        return await improveWithClaude(metaPrompt, inputElement, config);
+        improvementPromise = improveWithClaude(metaPrompt, inputElement, config);
       } else if (config.type === 'gemini') {
-        return await improveWithGemini(metaPrompt, inputElement, config);
+        improvementPromise = improveWithGemini(metaPrompt, inputElement, config);
+      } else {
+        throw new Error('Unsupported LLM type: ' + config.type);
       }
+
+      // Apply 30-second timeout
+      return await withTimeout(improvementPromise, 30000);
     } catch (error) {
       console.error('PromptSculptor: LLM improvement failed:', error);
       throw error;
@@ -1039,6 +1230,14 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
    * Show loading indicator
    */
   function showLoadingIndicator() {
+    // Add loading class to widget label
+    const labelBtn = document.getElementById('ps-label-btn');
+    if (labelBtn) {
+      labelBtn.classList.add('ps-loading');
+      labelBtn.disabled = true;
+    }
+
+    // Update star button with spinner
     const btn = document.getElementById('ps-improve-btn');
     if (btn) {
       btn.innerHTML = `
@@ -1049,6 +1248,7 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
       `;
       btn.disabled = true;
     }
+
     showNotification('Improving your prompt with AI...', 'info');
   }
 
@@ -1056,6 +1256,14 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
    * Hide loading indicator
    */
   function hideLoadingIndicator() {
+    // Remove loading class from widget label
+    const labelBtn = document.getElementById('ps-label-btn');
+    if (labelBtn) {
+      labelBtn.classList.remove('ps-loading');
+      labelBtn.disabled = false;
+    }
+
+    // Restore star button
     const btn = document.getElementById('ps-improve-btn');
     if (btn) {
       btn.innerHTML = `
@@ -1089,6 +1297,13 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
 
     // Setup modal actions
     setupModalActions(improverModal, originalText, improvedText, inputElement);
+
+    // Focus on improved prompt field after a brief delay to ensure modal is rendered
+    setTimeout(() => {
+      improvedTextarea.focus();
+      // Select all text for easy editing
+      improvedTextarea.select();
+    }, 100);
   }
 
   /**
@@ -1098,41 +1313,47 @@ Deliver ONLY the optimized search query. Zero commentary. Zero preamble. Pure en
     const modal = document.createElement('div');
     modal.id = 'ps-improvement-modal';
     modal.className = 'ps-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'ps-modal-title');
     modal.innerHTML = `
       <div class="ps-modal-content">
         <div class="ps-modal-header">
-          <h2>✨ AI-Improved Prompt</h2>
-          <button class="ps-modal-close" id="ps-modal-close">&times;</button>
+          <div>
+            <h2 id="ps-modal-title">✨ Review Improved Prompt</h2>
+            <p class="ps-modal-subtitle">Compare and choose the version you want to use.</p>
+          </div>
+          <button class="ps-modal-close" id="ps-modal-close" aria-label="Close dialog">&times;</button>
         </div>
         <div class="ps-modal-body">
           <div class="ps-comparison">
             <div class="ps-comparison-section">
               <h3>Original Prompt</h3>
-              <textarea id="ps-modal-original" readonly></textarea>
+              <textarea id="ps-modal-original" readonly aria-label="Original prompt text"></textarea>
             </div>
             <div class="ps-comparison-arrow">→</div>
             <div class="ps-comparison-section">
               <h3>AI-Improved Prompt</h3>
-              <textarea id="ps-modal-improved"></textarea>
+              <textarea id="ps-modal-improved" aria-label="Improved prompt text (editable)"></textarea>
             </div>
           </div>
           <div class="ps-modal-actions">
-            <button class="ps-btn ps-btn-secondary" id="ps-modal-copy">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="ps-btn ps-btn-secondary" id="ps-modal-copy" aria-label="Copy improved prompt to clipboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                 <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
               </svg>
               Copy
             </button>
-            <button class="ps-btn ps-btn-secondary" id="ps-modal-save">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="ps-btn ps-btn-secondary" id="ps-modal-save" aria-label="Save improved prompt to library">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
                 <path d="M17 21v-8H7v8M7 3v5h8"/>
               </svg>
               Save to Library
             </button>
-            <button class="ps-btn ps-btn-primary" id="ps-modal-use">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="ps-btn ps-btn-primary" id="ps-modal-use" aria-label="Use this improved prompt">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M20 6L9 17l-5-5"/>
               </svg>
               Use This Prompt
