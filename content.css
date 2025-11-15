@@ -1,59 +1,132 @@
 /**
  * PromptSculptor - Content Styles
  * Styling for all injected UI components
+ * Built by Rehan Nawaz - https://rehannawaz.info
  */
+
+/* Design Tokens - Color System */
+:root {
+  /* Primary Colors */
+  --ps-primary: #8b5cf6;
+  --ps-primary-light: #a78bfa;
+  --ps-primary-dark: #7c3aed;
+  --ps-primary-deep: #6d28d9;
+
+  /* Surface Colors */
+  --ps-surface: rgba(255, 255, 255, 0.98);
+  --ps-surface-alt: rgba(245, 245, 245, 0.98);
+  --ps-surface-dark: rgba(0, 0, 0, 0.95);
+  --ps-surface-hover: rgba(243, 244, 246, 1);
+
+  /* Border Colors */
+  --ps-border: #e5e7eb;
+  --ps-border-medium: #d1d5db;
+  --ps-border-primary: rgba(139, 92, 246, 0.3);
+
+  /* Text Colors */
+  --ps-text-dark: #111827;
+  --ps-text-medium: #374151;
+  --ps-text-light: #6b7280;
+  --ps-text-muted: #9ca3af;
+
+  /* Feedback Colors */
+  --ps-success: #10b981;
+  --ps-success-bg: #d1fae5;
+  --ps-warning: #f59e0b;
+  --ps-warning-bg: #fef3c7;
+  --ps-error: #ef4444;
+  --ps-error-bg: #fee2e2;
+  --ps-info: #3b82f6;
+  --ps-info-bg: #dbeafe;
+
+  /* Shadow Tokens */
+  --ps-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --ps-shadow-md: 0 3px 14px rgba(0, 0, 0, 0.12);
+  --ps-shadow-lg: 0 5px 20px rgba(0, 0, 0, 0.15);
+  --ps-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  /* Spacing */
+  --ps-space-xs: 4px;
+  --ps-space-sm: 8px;
+  --ps-space-md: 12px;
+  --ps-space-lg: 16px;
+  --ps-space-xl: 24px;
+
+  /* Border Radius */
+  --ps-radius-sm: 4px;
+  --ps-radius-md: 6px;
+  --ps-radius-lg: 8px;
+  --ps-radius-xl: 12px;
+  --ps-radius-2xl: 16px;
+
+  /* Typography */
+  --ps-font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --ps-font-size-xs: 11px;
+  --ps-font-size-sm: 12px;
+  --ps-font-size-base: 13px;
+  --ps-font-size-md: 14px;
+  --ps-font-size-lg: 15px;
+  --ps-font-size-xl: 16px;
+  --ps-font-size-2xl: 20px;
+  --ps-font-size-3xl: 24px;
+
+  /* Transitions */
+  --ps-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ps-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ps-transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* Widget Container */
 .ps-widget {
   position: fixed;
   z-index: 999999;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-family: var(--ps-font-family);
 }
 
 .ps-widget-container {
   display: flex;
-  gap: 5px;
+  gap: var(--ps-space-sm);
   align-items: center;
   justify-content: flex-end;
-  background: rgba(255, 255, 255, 0.98); /* White background when inactive */
+  background: var(--ps-surface);
   backdrop-filter: blur(12px);
-  border-radius: 8px; /* Rectangular shape */
-  padding: 4px;
-  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  width: 40px; /* Collapsed state - 15% smaller (48px * 0.85 ≈ 40px) */
+  border-radius: var(--ps-radius-lg);
+  padding: var(--ps-space-xs);
+  box-shadow: var(--ps-shadow-md);
+  border: 1px solid var(--ps-border-primary);
+  transition: all var(--ps-transition-slow);
+  width: 40px; /* Collapsed state */
   overflow: visible;
   position: relative;
 }
 
 .ps-widget:hover .ps-widget-container,
 .ps-widget.ps-active .ps-widget-container {
-  width: 204px; /* Expanded state - 15% smaller (240px * 0.85 = 204px) */
-  padding: 4px 4px 4px 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-  background: rgba(0, 0, 0, 0.95); /* Black background when active/hover */
+  width: 204px; /* Expanded state */
+  padding: var(--ps-space-xs) var(--ps-space-xs) var(--ps-space-xs) 10px;
+  box-shadow: var(--ps-shadow-lg);
+  background: var(--ps-surface-dark);
 }
 
-/* Widget Label - slides in from left on hover, clickable button */
+/* Widget Label - clickable button */
 .ps-widget-label {
-  color: #8b5cf6; /* Purple color for inactive state */
-  font-size: 11px; /* 15% smaller */
-  font-weight: 700; /* Bold */
+  color: var(--ps-primary);
+  font-size: var(--ps-font-size-xs);
+  font-weight: 700;
   letter-spacing: 0.3px;
   white-space: nowrap;
   opacity: 0;
   transform: translateX(20px);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--ps-transition-slow);
   margin-right: auto;
-  padding: 6px 10px; /* 15% smaller */
+  padding: 6px 10px;
   border: none;
   background: transparent;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--ps-radius-md);
   position: relative;
   overflow: hidden;
-  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: var(--ps-font-family);
   text-shadow: 0 1px 2px rgba(139, 92, 246, 0.1);
 }
 
@@ -62,19 +135,31 @@
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
-  color: #a78bfa; /* Lighter purple (second tone) when active/hover */
+  color: var(--ps-primary-light);
 }
 
-/* Hover effect for clickable label */
 .ps-widget-label:hover {
   background: rgba(139, 92, 246, 0.1);
   transform: translateX(0) scale(1.02);
-  color: #a78bfa; /* Second tone on hover */
+  color: var(--ps-primary-light);
 }
 
 .ps-widget-label:active {
   background: rgba(139, 92, 246, 0.2);
   transform: translateX(0) scale(0.98);
+}
+
+/* Loading state for label */
+.ps-widget-label.ps-loading::after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: var(--ps-space-sm);
+  border: 2px solid var(--ps-primary-light);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ps-spin 0.6s linear infinite;
 }
 
 /* Ripple effect on click */
@@ -654,45 +739,85 @@
   font-size: 14px;
 }
 
-/* Notification */
+/* Toast Notifications - Enhanced */
 .ps-notification {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  padding: 12px 20px;
+  bottom: var(--ps-space-xl);
+  right: var(--ps-space-xl);
+  min-width: 280px;
+  max-width: 400px;
+  padding: var(--ps-space-md) var(--ps-space-lg);
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-left: 4px solid #8b5cf6;
-  font-size: 14px;
+  border-radius: var(--ps-radius-lg);
+  box-shadow: var(--ps-shadow-xl);
+  border-left: 4px solid var(--ps-primary);
+  font-size: var(--ps-font-size-md);
   font-weight: 500;
   z-index: 1000001;
-  transform: translateX(400px);
-  transition: transform 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  transform: translateX(450px);
+  transition: transform var(--ps-transition-base);
+  font-family: var(--ps-font-family);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ps-space-md);
 }
 
 .ps-notification.ps-show {
   transform: translateX(0);
 }
 
+/* Notification close button */
+.ps-notification-close {
+  background: none;
+  border: none;
+  color: var(--ps-text-light);
+  cursor: pointer;
+  padding: var(--ps-space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ps-radius-sm);
+  transition: all var(--ps-transition-fast);
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ps-notification-close:hover {
+  background: var(--ps-surface-hover);
+  color: var(--ps-text-dark);
+}
+
+/* Notification content */
+.ps-notification-content {
+  flex: 1;
+}
+
+/* Notification types */
 .ps-notification-success {
-  border-left-color: #10b981;
+  border-left-color: var(--ps-success);
+  background: var(--ps-success-bg);
   color: #065f46;
 }
 
 .ps-notification-error {
-  border-left-color: #ef4444;
+  border-left-color: var(--ps-error);
+  background: var(--ps-error-bg);
   color: #991b1b;
 }
 
 .ps-notification-warning {
-  border-left-color: #f59e0b;
+  border-left-color: var(--ps-warning);
+  background: var(--ps-warning-bg);
   color: #92400e;
 }
 
 .ps-notification-info {
-  border-left-color: #3b82f6;
+  border-left-color: var(--ps-info);
+  background: var(--ps-info-bg);
   color: #1e40af;
 }
 
