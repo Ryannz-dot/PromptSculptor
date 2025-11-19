@@ -64,6 +64,13 @@ OPTIMIZATION RULES:
 ✓ Leverage ChatGPT's strengths: detailed reasoning, step-by-step thinking, comprehensive responses
 ✓ DO NOT answer the task - only restructure the prompt
 
+WRITING LEVEL - 8TH GRADE:
+✓ Use simple, everyday words that a 13-14 year old would understand
+✓ Keep sentences short (under 20 words each)
+✓ Avoid jargon, technical terms, and complex vocabulary
+✓ Use active voice and clear, direct language
+✓ Break down complex ideas into simple steps
+
 ORIGINAL USER PROMPT:
 ━━━━━━━━━━━━━━━━━━━━
 ${userPrompt}
@@ -115,6 +122,13 @@ OPTIMIZATION RULES:
 ✓ Leverage ChatGPT's strengths: detailed reasoning, step-by-step thinking, comprehensive responses
 ✓ DO NOT answer the task - only restructure the prompt
 
+WRITING LEVEL - 8TH GRADE:
+✓ Use simple, everyday words that a 13-14 year old would understand
+✓ Keep sentences short (under 20 words each)
+✓ Avoid jargon, technical terms, and complex vocabulary
+✓ Use active voice and clear, direct language
+✓ Break down complex ideas into simple steps
+
 ORIGINAL USER PROMPT:
 ━━━━━━━━━━━━━━━━━━━━
 ${userPrompt}
@@ -163,6 +177,13 @@ CLAUDE OPTIMIZATION RULES:
 ✓ Leverage Claude's strengths: extended context, chain-of-thought reasoning, nuanced analysis, multi-part tasks
 ✓ Request structured thinking when tasks are complex
 ✓ DO NOT answer the task - only restructure the prompt
+
+WRITING LEVEL - 8TH GRADE:
+✓ Use simple, everyday words that a 13-14 year old would understand
+✓ Keep sentences short (under 20 words each)
+✓ Avoid jargon, technical terms, and complex vocabulary
+✓ Use active voice and clear, direct language
+✓ Break down complex ideas into simple steps
 
 USER'S ORIGINAL PROMPT:
 ═════════════════════
@@ -219,6 +240,13 @@ GEMINI OPTIMIZATION RULES:
 ✓ Specify level of detail and complexity needed
 ✓ DO NOT answer the task - only restructure the prompt
 
+WRITING LEVEL - 8TH GRADE:
+✓ Use simple, everyday words that a 13-14 year old would understand
+✓ Keep sentences short (under 20 words each)
+✓ Avoid jargon, technical terms, and complex vocabulary
+✓ Use active voice and clear, direct language
+✓ Break down complex ideas into simple steps
+
 ORIGINAL USER PROMPT:
 ────────────────────────────────
 ${userPrompt}
@@ -272,6 +300,13 @@ PERPLEXITY OPTIMIZATION RULES:
 ✓ Define source quality and credibility requirements
 ✓ DO NOT answer the research question - only restructure the query
 
+WRITING LEVEL - 8TH GRADE:
+✓ Use simple, everyday words that a 13-14 year old would understand
+✓ Keep sentences short (under 20 words each)
+✓ Avoid jargon, technical terms, and complex vocabulary
+✓ Use active voice and clear, direct language
+✓ Break down complex ideas into simple steps
+
 USER'S ORIGINAL QUERY:
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ${userPrompt}
@@ -323,6 +358,13 @@ PERPLEXITY OPTIMIZATION RULES:
 ✓ Specify temporal constraints (recent = last week/month/year)
 ✓ Define source quality and credibility requirements
 ✓ DO NOT answer the research question - only restructure the query
+
+WRITING LEVEL - 8TH GRADE:
+✓ Use simple, everyday words that a 13-14 year old would understand
+✓ Keep sentences short (under 20 words each)
+✓ Avoid jargon, technical terms, and complex vocabulary
+✓ Use active voice and clear, direct language
+✓ Break down complex ideas into simple steps
 
 USER'S ORIGINAL QUERY:
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
